@@ -11,10 +11,7 @@
 
 int main(int argc, char *argv[]) {
 
-    // Start with an empty grid
-    Grid grid(32, 10);
-
-    Grid glider    = Zoo::glider(),
+   /* Grid glider    = Zoo::glider(),
          glider90  = glider.rotate(1),
          glider180 = glider.rotate(2),
          glider270 = glider.rotate(3);
@@ -43,7 +40,7 @@ int main(int argc, char *argv[]) {
     catch (const std::exception &ex) {
         std::cerr << ex.what() << std::endl;
         std::exit(-1);
-    }
+    }*/
 
     // Destructors handle all the memory deallocation
     return 0;

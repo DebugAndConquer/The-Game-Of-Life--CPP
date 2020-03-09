@@ -11,11 +11,12 @@
  * @author YOUR_STUDENT_NUMBER
  * @date March, 2020
  */
-#include "grid.h"
-
 // Include the minimal number of headers needed to support your implementation.
 // #include ...
-
+#include "grid.h"
+#include <iostream>
+#include <vector>
+#include <algorithm>
 /**
  * Grid::Grid()
  *
@@ -29,6 +30,9 @@
  *
  */
 
+Grid::Grid() : width(0), height(0) {
+   Grid(this->width);
+}
 
 /**
  * Grid::Grid(square_size)
@@ -53,7 +57,9 @@
  * @param square_size
  *      The edge size to use for the width and height of the grid.
  */
-
+Grid::Grid(const int square_size) : width(square_size), height(square_size) {
+    Grid(this->width,this->height);
+}
 
 /**
  * Grid::Grid(width, height)
@@ -71,7 +77,15 @@
  * @param height
  *      The height of the grid.
  */
+Grid::Grid(const int width, const int height) : width(width), height(height) {
+    // If the grid is of size 0*0 then it doesnt exist
+    if (this->width == 0 && this->height == 0) {
+        this->grid.empty();
+    } else {
 
+        this->grid = std::vector<Cell>(width*height, Cell::DEAD);
+    }
+}
 
 /**
  * Grid::get_width()
@@ -96,7 +110,9 @@
  * @return
  *      The width of the grid.
  */
-
+int Grid::get_width() const {
+    return this->width;
+}
 
 /**
  * Grid::get_height()
@@ -122,6 +138,9 @@
  *      The height of the grid.
  */
 
+int Grid::get_height() const {
+    return this->height;
+}
 
 /**
  * Grid::get_total_cells()
@@ -146,7 +165,10 @@
  * @return
  *      The number of total cells.
  */
-
+int Grid::get_total_cells() const {
+    const int total = this->width * this->height;
+    return total;
+}
 
 /**
  * Grid::get_alive_cells()
@@ -171,7 +193,11 @@
  * @return
  *      The number of alive cells.
  */
-
+int Grid::get_alive_cells() const {
+    //const int alive = std::count(this->grid.begin(),this->grid.end(),Cell::ALIVE);
+    int sum  = std::count(grid.begin(), grid.end(), Cell::ALIVE);
+    return sum;
+}
 
 /**
  * Grid::get_dead_cells()
@@ -197,6 +223,9 @@
  *      The number of dead cells.
  */
 
+int Grid::get_dead_cells() const {
+    return (get_total_cells() - get_alive_cells());
+}
 
 /**
  * Grid::resize(square_size)
@@ -216,6 +245,9 @@
  *      The new edge size for both the width and height of the grid.
  */
 
+void Grid::resize(const int square_size) {
+    resize(square_size,square_size);
+}
 
 /**
  * Grid::resize(width, height)
@@ -238,6 +270,16 @@
  *      The new height for the grid.
  */
 
+void Grid::resize(const int width, const int height) {
+    if (this->width == width && this->height == height) {
+        std::cout<<"The new grid size is the same as the old one!";
+    } else {
+        //this->grid.resize(width, std::vector<char>(height, Cell::DEAD));
+        this->width = width;
+        this->height = height;
+        this->grid.resize(width*height, Cell::DEAD);
+    }
+}
 
 /**
  * Grid::get_index(x, y)
@@ -255,7 +297,10 @@
  * @return
  *      The 1d offset from the start of the data array where the desired cell is located.
  */
-
+int Grid::get_index(const int x, const int y) const {
+    const int index = y * this->width + x;
+    return index;
+}
 
 /**
  * Grid::get(x, y)
@@ -286,6 +331,17 @@
  *      std::exception or sub-class if x,y is not a valid coordinate within the grid.
  */
 
+Cell Grid::get(const int x, const int y) const {
+    try {
+        if(x >= this->width && x < 0) throw std::exception();
+        if(y >= this->height && y < 0) throw std::exception();
+
+    } catch (const std::exception& e) {
+        std::cout << e.what() << std::endl;
+    }
+    Cell value = this->operator()(x, y);
+    return value;
+}
 
 /**
  * Grid::set(x, y, value)
@@ -315,6 +371,16 @@
  *      std::exception or sub-class if x,y is not a valid coordinate within the grid.
  */
 
+void Grid::set(const int x, const int y, const Cell value) const {
+    try {
+        if(x >= this->width && x < 0) throw std::exception();
+        if(y >= this->height && y < 0) throw std::exception();
+        this->operator()(x, y) = value;
+    } catch (const std::exception& e) {
+        std::cout << e.what() << std::endl;
+    }
+
+}
 
 /**
  * Grid::operator()(x, y)
@@ -351,7 +417,16 @@
  * @throws
  *      std::runtime_error or sub-class if x,y is not a valid coordinate within the grid.
  */
-
+Cell& Grid::operator() (const int x, const int y) {
+    try {
+        if(x >= this->width && x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
+        if(y >= this->height && y < 0) throw std::runtime_error(std::string("y is out of bounds!"));
+    } catch (const std::runtime_error& e) {
+        std::cout << "Runtime error: " << e.what() << std::endl;
+    }
+    int t = this->get_index(x,y);
+    return grid[t];
+}
 
 /**
  * Grid::operator()(x, y)
@@ -384,6 +459,18 @@
  *      std::exception or sub-class if x,y is not a valid coordinate within the grid.
  */
 
+Cell& Grid::operator() (const int x, const int y) const {
+    try {
+        if(x >= this->width && x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
+        if(y >= this->height && y < 0) throw std::runtime_error(std::string("y is out of bounds!"));
+    } catch (const std::runtime_error& e) {
+        std::cout << "Runtime error: " << e.what();
+    }
+    int t = this->get_index(x,y);
+    const Cell& res = grid[t];
+    return const_cast<Cell &>(res);
+
+}
 
 /**
  * Grid::crop(x0, y0, x1, y1)
