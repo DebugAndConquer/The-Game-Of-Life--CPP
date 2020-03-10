@@ -17,6 +17,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+
 /**
  * Grid::Grid()
  *
@@ -30,8 +31,7 @@
  *
  */
 
-Grid::Grid() : width(0), height(0) {
-   Grid(this->width);
+Grid::Grid() : Grid(0,0){;
 }
 
 /**
@@ -57,8 +57,8 @@ Grid::Grid() : width(0), height(0) {
  * @param square_size
  *      The edge size to use for the width and height of the grid.
  */
-Grid::Grid(const int square_size) : width(square_size), height(square_size) {
-    Grid(this->width,this->height);
+Grid::Grid(const int square_size) : Grid(square_size,square_size) {
+
 }
 
 /**
@@ -82,8 +82,7 @@ Grid::Grid(const int width, const int height) : width(width), height(height) {
     if (this->width == 0 && this->height == 0) {
         this->grid.empty();
     } else {
-
-        this->grid = std::vector<Cell>(width*height, Cell::DEAD);
+        this->grid = std::vector<Cell>((width * height), Cell::DEAD);
     }
 }
 
@@ -195,7 +194,7 @@ int Grid::get_total_cells() const {
  */
 int Grid::get_alive_cells() const {
     //const int alive = std::count(this->grid.begin(),this->grid.end(),Cell::ALIVE);
-    int sum  = std::count(grid.begin(), grid.end(), Cell::ALIVE);
+    int sum = std::count(grid.begin(), grid.end(), Cell::ALIVE);
     return sum;
 }
 
@@ -246,7 +245,7 @@ int Grid::get_dead_cells() const {
  */
 
 void Grid::resize(const int square_size) {
-    resize(square_size,square_size);
+    resize(square_size, square_size);
 }
 
 /**
@@ -277,7 +276,7 @@ void Grid::resize(const int width, const int height) {
         //this->grid.resize(width, std::vector<char>(height, Cell::DEAD));
         this->width = width;
         this->height = height;
-        this->grid.resize(width*height, Cell::DEAD);
+        this->grid.resize(width*height,Cell::DEAD);
     }
 }
 
@@ -333,10 +332,10 @@ int Grid::get_index(const int x, const int y) const {
 
 Cell Grid::get(const int x, const int y) const {
     try {
-        if(x >= this->width && x < 0) throw std::exception();
-        if(y >= this->height && y < 0) throw std::exception();
+        if (x >= this->width || x < 0) throw std::exception();
+        if (y >= this->height || y < 0) throw std::exception();
 
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cout << e.what() << std::endl;
     }
     Cell value = this->operator()(x, y);
@@ -373,10 +372,10 @@ Cell Grid::get(const int x, const int y) const {
 
 void Grid::set(const int x, const int y, const Cell value) const {
     try {
-        if(x >= this->width && x < 0) throw std::exception();
-        if(y >= this->height && y < 0) throw std::exception();
+        if (x >= this->width || x < 0) throw std::exception();
+        if (y >= this->height || y < 0) throw std::exception();
         this->operator()(x, y) = value;
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cout << e.what() << std::endl;
     }
 
@@ -417,14 +416,14 @@ void Grid::set(const int x, const int y, const Cell value) const {
  * @throws
  *      std::runtime_error or sub-class if x,y is not a valid coordinate within the grid.
  */
-Cell& Grid::operator() (const int x, const int y) {
+Cell & Grid::operator()(const int x, const int y) {
     try {
-        if(x >= this->width && x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
-        if(y >= this->height && y < 0) throw std::runtime_error(std::string("y is out of bounds!"));
-    } catch (const std::runtime_error& e) {
+        if (x >= this->width || x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
+        if (y >= this->height || y < 0) throw std::runtime_error(std::string("y is out of bounds!"));
+    } catch (const std::runtime_error &e) {
         std::cout << "Runtime error: " << e.what() << std::endl;
     }
-    int t = this->get_index(x,y);
+    int t = this->get_index(x, y);
     return grid[t];
 }
 
@@ -459,15 +458,15 @@ Cell& Grid::operator() (const int x, const int y) {
  *      std::exception or sub-class if x,y is not a valid coordinate within the grid.
  */
 
-Cell& Grid::operator() (const int x, const int y) const {
+Cell &Grid::operator()(const int x, const int y) const {
     try {
-        if(x >= this->width && x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
-        if(y >= this->height && y < 0) throw std::runtime_error(std::string("y is out of bounds!"));
-    } catch (const std::runtime_error& e) {
+        if (x >= this->width || x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
+        if (y >= this->height || y < 0) throw std::runtime_error(std::string("y is out of bounds!"));
+    } catch (const std::runtime_error &e) {
         std::cout << "Runtime error: " << e.what();
     }
-    int t = this->get_index(x,y);
-    const Cell& res = grid[t];
+    int t = this->get_index(x, y);
+    const Cell &res = grid[t];
     return const_cast<Cell &>(res);
 
 }
@@ -606,4 +605,29 @@ Cell& Grid::operator() (const int x, const int y) const {
  * @return
  *      Returns a reference to the output stream to enable operator chaining.
  */
+std::ostream & operator<< (std::ostream &os, const Grid &g) {
+    std::string border = "";
+    os << "+";
+    border+="+";
+    for (int i = 0; i < g.width; i++) {
+        os << "-";
+        border+="-";
+    }
+    os << "+" << std::endl;
+    border+="+";
 
+    for (int i = 0; i < g.height; i++) {
+        os << "|";
+        for (int j = 0; j < g.width; j++) {
+            if (g.get(j,i) == Cell::ALIVE) {
+                os << "#";
+            } else {
+                os << " ";
+            }
+        }
+        os << "|" << std::endl;
+    }
+
+    os << border;
+    return os;
+}

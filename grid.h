@@ -33,7 +33,7 @@ class Grid {
 private:
     int width,height;
     std::vector<Cell> grid;                    // 2D Vector for storing the grid
-    int get_index(const int x , const int y) const ;       // Gets 1D index of a 2D coordinate
+   // move get_index here
 public:
     // Public functions
     Grid();                                              // Default Constructor with grid size = 0
@@ -42,7 +42,10 @@ public:
     Cell& operator() (const int x, const int y);
     Cell& operator() (const int x, const int y) const;
 
+    friend std::ostream & operator<< (std::ostream &os, const Grid &g);
+
     // Member Functions
+    int get_index(const int x , const int y) const ;       // Gets 1D index of a 2D coordinate
     int get_width() const ;
     int get_height() const ;
     int get_total_cells() const ;
@@ -53,4 +56,5 @@ public:
     Cell get(const int x, const int y) const;       // Returns the value of the cell at the desired coordinate
     void set(const int x, const int y,
             const Cell value) const;                // Updates the value of the cell at the desired coordinate
+
 };

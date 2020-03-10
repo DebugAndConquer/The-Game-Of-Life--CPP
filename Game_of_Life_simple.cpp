@@ -10,7 +10,6 @@
 #include "zoo.h"
 
 int main(int argc, char *argv[]) {
-
    /* Grid glider    = Zoo::glider(),
          glider90  = glider.rotate(1),
          glider180 = glider.rotate(2),
