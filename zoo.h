@@ -9,6 +9,8 @@
  * @date March, 2020
  */
 #pragma once
+#include <string>
+#include "grid.h"
 
 // Add the minimal number of includes you need in order to declare the namespace.
 // #include ...
@@ -21,4 +23,10 @@ namespace Zoo {
     //      Step 1. Draw a circle.
     //      Step 2. Draw the rest of the owl.
 
+    Grid glider(); // Draws a glider on a 3x3 grid
+    Grid r_pentomino(); // Draws a r_pentomino on a 3x3 grid
+    Grid light_weight_spaceship(); // Draws a lightweight spaceship on a 5x4 grid
+    Grid load_ascii(std::string path); // Reads a .gol file containing the grid and produces a Grid obejct
+    void save_ascii(std::string path, Grid grid); // Saves a grid in a .gol file
+    void save_binary(std::string path, Grid grid);
 };

@@ -52,9 +52,9 @@ public:
     int get_alive_cells() const ;
     int get_dead_cells() const ;
     void resize(const int square_size);             // Resize the grid with new width=height
-    void resize(const int width, const int height); // Resize the grid with new width and new height
+    void resize(const int new_width, const int new_height); // Resize the grid with new width and new new_height
     Cell get(const int x, const int y) const;       // Returns the value of the cell at the desired coordinate
     void set(const int x, const int y,
-            const Cell value) const;                // Updates the value of the cell at the desired coordinate
+            const Cell value);                // Updates the value of the cell at the desired coordinate
 
 };

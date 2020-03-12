@@ -17,6 +17,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 
 /**
  * Grid::Grid()
@@ -249,9 +250,9 @@ void Grid::resize(const int square_size) {
 }
 
 /**
- * Grid::resize(width, height)
+ * Grid::resize(width, new_height)
  *
- * Resize the current grid to a new width and height. The content of the grid
+ * Resize the current grid to a new width and new_height. The content of the grid
  * should be preserved within the kept region and padded with Grid::DEAD if new cells are added.
  *
  * @example
@@ -266,17 +267,17 @@ void Grid::resize(const int square_size) {
  *      The new width for the grid.
  *
  * @param new_height
- *      The new height for the grid.
+ *      The new new_height for the grid.
  */
 
-void Grid::resize(const int width, const int height) {
-    if (this->width == width && this->height == height) {
+void Grid::resize(const int new_width, const int new_height) {
+    if (this->width == new_width && this->height == new_height) {
         std::cout<<"The new grid size is the same as the old one!";
     } else {
         //this->grid.resize(width, std::vector<char>(height, Cell::DEAD));
-        this->width = width;
-        this->height = height;
-        this->grid.resize(width*height,Cell::DEAD);
+        this->width = new_width;
+        this->height = new_height;
+        this->grid.resize(new_width*new_height,Cell::DEAD);
     }
 }
 
@@ -370,7 +371,7 @@ Cell Grid::get(const int x, const int y) const {
  *      std::exception or sub-class if x,y is not a valid coordinate within the grid.
  */
 
-void Grid::set(const int x, const int y, const Cell value) const {
+void Grid::set(const int x, const int y, const Cell value) {
     try {
         if (x >= this->width || x < 0) throw std::exception();
         if (y >= this->height || y < 0) throw std::exception();
