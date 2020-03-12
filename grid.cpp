@@ -339,7 +339,7 @@ Cell Grid::get(const int x, const int y) const {
     } catch (const std::exception &e) {
         std::cout << e.what() << std::endl;
     }
-    Cell value = this->operator()(x, y);
+    Cell value = (*this)(x, y);
     return value;
 }
 
@@ -629,6 +629,8 @@ std::ostream & operator<< (std::ostream &os, const Grid &g) {
         os << "|" << std::endl;
     }
 
+
     os << border;
+    os << std::endl;
     return os;
 }

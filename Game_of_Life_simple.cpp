@@ -21,12 +21,12 @@ int main(int argc, char *argv[]) {
     g.resize(8, 8);
 
     std::cout << g << std::endl;*/
-    Grid g = Zoo::light_weight_spaceship();
-    std::cout << g << std::endl;
+    //Grid g = Zoo::light_weight_spaceship();
+    //std::cout << g << std::endl;
 
-    Grid g1 = Zoo::load_ascii(R"(../test_inputs/GLIDER.gol)");
+    Grid g1 = Zoo::glider();
     std::cout << g1 << std::endl;
-    Zoo::save_ascii(R"(../test_inputs/myG.gol)",g1);
+    //Zoo::save_ascii(R"(../test_inputs/myG.gol)",g1);
     /* Grid glider    = Zoo::glider(),
           glider90  = glider.rotate(1),
           glider180 = glider.rotate(2),

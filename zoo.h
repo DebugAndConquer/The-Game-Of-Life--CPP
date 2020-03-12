@@ -10,6 +10,7 @@
  */
 #pragma once
 #include <string>
+#include <algorithm>
 #include "grid.h"
 
 // Add the minimal number of includes you need in order to declare the namespace.
@@ -29,4 +30,6 @@ namespace Zoo {
     Grid load_ascii(std::string path); // Reads a .gol file containing the grid and produces a Grid obejct
     void save_ascii(std::string path, Grid grid); // Saves a grid in a .gol file
     void save_binary(std::string path, Grid grid);
+
+    Grid load_binary(std::string path);
 };

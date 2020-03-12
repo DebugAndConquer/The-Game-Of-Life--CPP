@@ -23,6 +23,7 @@
  */
 #include <string>
 #include <fstream>
+#include <algorithm>
 #include "zoo.h"
 #include "grid.h"
 
@@ -203,11 +204,11 @@ Grid Zoo::load_ascii(std::string path) {
                 data.erase(0, 1);
             }
             // Throws an exception if \n is missing
-            if ((int)data.back() != 0) {
+            if ((int) data.back() != 0) {
                 throw std::runtime_error(std::string("Missing newline character!"));
             }
         }
-    } catch (const std::exception &e){
+    } catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
         exit(1);
     }
@@ -250,7 +251,7 @@ void Zoo::save_ascii(std::string path, Grid grid) {
     std::ofstream file;
     file.open(path);
     // Throw an exception if a file cannot be opened
-    if(!file) {
+    if (!file) {
         throw std::runtime_error(std::string("Can't open the file!"));
     }
     int width = grid.get_width();
@@ -294,7 +295,80 @@ void Zoo::save_ascii(std::string path, Grid grid) {
  *          - The file cannot be opened.
  *          - The file ends unexpectedly.
  */
+Grid Zoo::load_binary(std::string path) {
+    std::ifstream bFile;
+    bFile.open(path, std::ios::in | std::ios::binary);
+    if (!bFile.good()) {
+        throw std::runtime_error(std::string("Error Opening file"));
+    }
 
+    // Traversing to the end of the file to fetch the size
+    bFile.seekg(0, std::ios::end);
+   unsigned int size = (int) bFile.tellg();
+    // Getting back to the beginning of the file to start reading
+    bFile.seekg(0, std::ios::beg);
+    // Reading the size of a grid and constructing it
+    int width, height;
+    bFile.read(reinterpret_cast<char *>(&width), sizeof(int));
+    bFile.read(reinterpret_cast<char *>(&height), sizeof(int));
+
+    // The size of file should be 2*sizeof(int) for w and h +
+    // number of bytes to store w*h bits + number of padding bytes
+    if (size != (2 * sizeof(int) + ((width * height) / 8) + ((width * height) % 8))) {
+        throw std::runtime_error(std::string("The file is corrupted!"));
+    }
+    Grid g(width, height);
+
+    // Calculating padding value
+    int padding, loopValue;
+    if (width * height % 8 != 0) {
+        // padding indicates a number of bytes needed to finish the byte
+        padding = width * height % 8;
+        // loopValue makes sure we loop on w*h bytes
+        loopValue = (width * height - padding) / 8;
+    } else {
+        loopValue = width * height / 8;
+    }
+    // A container for every byte
+    std::vector<std::string> bytes(loopValue, "+");
+    // Reading bytes corresponding to the grid (without the padding)
+    for (int i = 0; i < loopValue; i++) {
+        unsigned char currVal;
+        bFile.read(reinterpret_cast<char *>(&currVal), sizeof(char));
+        // A current byte we are reading
+        std::string currentByte = "";
+        for (int b = 0; b < 8; b++) {
+            // += synatx will create our current byte by adding each bit separately
+            currentByte += std::to_string(((currVal >> b) & 0x1));
+        }
+        bytes[i] = currentByte;
+        std::cout << std::endl;
+    }
+    //TODO: Still have no idea whereas we need to reverse bits or not
+    //TODO: but without doing it I get the correct output
+    // Reversing all bytes
+    //for (auto& byte : bytes) {
+    //  std::reverse(byte.begin(),byte.end());
+    //}
+
+    // Append all bytes into one string
+    std::string byte = "";
+    for (unsigned int i = 0; i < bytes.size(); i++) {
+        byte += bytes[i];
+    }
+
+    // Write the data to the Grid structure
+    for (unsigned int i = 0; i < byte.size(); i++) {
+        if (byte[i] == '1') {
+            // Get x, y using the idx
+            int x = i % width;
+            int y = (i - x) / width;
+            g(x, y) = Cell::ALIVE;
+        }
+    }
+    bFile.close();
+    return g;
+}
 
 /**
  * Zoo::save_binary(path, grid)
@@ -326,27 +400,30 @@ void Zoo::save_ascii(std::string path, Grid grid) {
  */
 
 void Zoo::save_binary(std::string path, Grid grid) {
-    /*std::ofstream file;
-    file.open(path,std::ios::out | std::ios::binary);
+    std::ofstream file;
+    file.open(path, std::ios::out | std::ios::binary);
     // Throw an exception if a file cannot be opened
-    if(!file) {
+    if (!file) {
         throw std::runtime_error(std::string("Can't open the file!"));
     }
     int width = grid.get_width();
     int height = grid.get_height();
+    char alive = '1';
+    char dead = '0';
+
     // Write width and height to a file
-    file.write((char*) &width, sizeof(int));
-    file.write((char*) &height, sizeof(int));
-    // Write every cell to a file
+    file.write((char *) &width, sizeof(int));
+    file.write((char *) &height, sizeof(int));
+
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             if (grid(j, i) == Cell::ALIVE) {
-                file << '#';
+                file.write((char *) &alive, sizeof(char));
             } else {
-                file << ' ';
+                file.write((char *) &dead, sizeof(char));
             }
         }
-        file << std::endl;
     }
-    file.close();*/
+
+    file.close();
 }
