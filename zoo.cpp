@@ -304,7 +304,7 @@ Grid Zoo::load_binary(std::string path) {
 
     // Traversing to the end of the file to fetch the size
     bFile.seekg(0, std::ios::end);
-   unsigned int size = (int) bFile.tellg();
+    unsigned int size = (int) bFile.tellg();
     // Getting back to the beginning of the file to start reading
     bFile.seekg(0, std::ios::beg);
     // Reading the size of a grid and constructing it
@@ -314,23 +314,24 @@ Grid Zoo::load_binary(std::string path) {
 
     // The size of file should be 2*sizeof(int) for w and h +
     // number of bytes to store w*h bits + number of padding bytes
-    if (size != (2 * sizeof(int) + ((width * height) / 8) + ((width * height) % 8))) {
-        throw std::runtime_error(std::string("The file is corrupted!"));
-    }
+    //if (size != (2 * sizeof(int) + ((width * height) / 8) + ((width * height) % 8))) {
+    //    throw std::runtime_error(std::string("The file is corrupted!"));
+    //}
+    std::cout <<  2 * sizeof(int) + ((width * height) / 8);
     Grid g(width, height);
 
     // Calculating padding value
     int padding, loopValue;
     if (width * height % 8 != 0) {
-        // padding indicates a number of bytes needed to finish the byte
+        // padding indicates a number of bits needed to finish the byte
         padding = width * height % 8;
-        // loopValue makes sure we loop on w*h bytes
-        loopValue = (width * height - padding) / 8;
+        // loopValue makes sure we loop on every byte, which might contain the information
+        loopValue = (width * height + padding) / 8;
     } else {
         loopValue = width * height / 8;
     }
-    // A container for every byte
-    std::vector<std::string> bytes(loopValue, "+");
+    // A container for every byte, initialized with empty strings
+    std::vector<std::string> bytes(loopValue, "");
     // Reading bytes corresponding to the grid (without the padding)
     for (int i = 0; i < loopValue; i++) {
         unsigned char currVal;
@@ -338,13 +339,13 @@ Grid Zoo::load_binary(std::string path) {
         // A current byte we are reading
         std::string currentByte = "";
         for (int b = 0; b < 8; b++) {
-            // += synatx will create our current byte by adding each bit separately
+            // += syntax will create our current byte by adding each bit separately
             currentByte += std::to_string(((currVal >> b) & 0x1));
         }
         bytes[i] = currentByte;
         std::cout << std::endl;
     }
-    //TODO: Still have no idea whereas we need to reverse bits or not
+    //TODO: Still have no idea about rather we need to reverse bits or not
     //TODO: but without doing it I get the correct output
     // Reversing all bytes
     //for (auto& byte : bytes) {

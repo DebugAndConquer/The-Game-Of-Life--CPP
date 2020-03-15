@@ -273,12 +273,38 @@ void Grid::resize(const int square_size) {
 void Grid::resize(const int new_width, const int new_height) {
     if (this->width == new_width && this->height == new_height) {
         std::cout<<"The new grid size is the same as the old one!";
-    } else {
-        //this->grid.resize(width, std::vector<char>(height, Cell::DEAD));
-        this->width = new_width;
-        this->height = new_height;
-        this->grid.resize(new_width*new_height,Cell::DEAD);
     }
+    //Creating new Grid to store resized data
+    Grid g (new_width,new_height);
+    // If the resized vector is smaller than the original
+    if (new_width*new_height < this->width*this->get_height()) {
+        for (int i = 0; i < new_height; i++) {
+            for (int j = 0; j < new_width; j++) {
+                // Mapping 1D representation of a vector to a 2D one
+                int idx = j + (i * new_width);
+                int newX = idx % new_width;
+                int newY = (idx - j) / new_width;
+                // Cloning values from old vector to a new one w.r.t new coordinates
+                g(newX, newY) = this->get(j, i);
+            }
+        }
+    // If the resized vector is larger than the original
+    } else {
+        for (int i = 0; i < this->height; i++) {
+            for (int j = 0; j < this->width; j++) {
+                // Mapping 1D representation of a vector to a 2D one
+                int idx = j + (i * new_width);
+                int newX = idx % new_width;
+                int newY = (idx - j) / new_width;
+                // Cloning values from old vector to a new one w.r.t new coordinates
+                g(newX, newY) = this->get(j, i);
+            }
+        }
+    }
+    // Updating fields
+    this->width = new_width;
+    this->height = new_height;
+    this->grid = g.grid;
 }
 
 /**

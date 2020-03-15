@@ -10,7 +10,7 @@
 #include "zoo.h"
 
 int main(int argc, char *argv[]) {
-    /*Grid g(5,5);
+   Grid g(8,8);
     for (int y = 0; y < 4; y++) {
         for (int x = 0; x < 4; x++) {
 
@@ -18,15 +18,24 @@ int main(int argc, char *argv[]) {
         }
     }
     std::cout << g << std::endl;
-    g.resize(8, 8);
+    g.resize(16,16);
+    std::cout << g << std::endl;
+    g.resize(8,2);
+    std::cout << g << std::endl;
+    g.resize(2,2);
+    std::cout << g << std::endl;
+    /* Grid g(6);
+    g(2,1) = Cell::ALIVE;
+    g(3,2) = Cell::ALIVE;
+    g(1,3) = Cell::ALIVE;
+    g(2,3) = Cell::ALIVE;
+    g(3,3) = Cell::ALIVE;
+    std::cout << g << std::endl;
+    Zoo::save_binary(R"(../test_inputs/myG.bgol)",g);*/
+    //Grid g1 = Zoo::load_binary(R"(../test_inputs/GLIDER.bgol)");
+    //std::cout << g1;
 
-    std::cout << g << std::endl;*/
-    //Grid g = Zoo::light_weight_spaceship();
-    //std::cout << g << std::endl;
 
-    Grid g1 = Zoo::glider();
-    std::cout << g1 << std::endl;
-    //Zoo::save_ascii(R"(../test_inputs/myG.gol)",g1);
     /* Grid glider    = Zoo::glider(),
           glider90  = glider.rotate(1),
           glider180 = glider.rotate(2),
