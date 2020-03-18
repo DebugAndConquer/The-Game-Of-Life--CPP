@@ -317,11 +317,11 @@ Grid Zoo::load_binary(std::string path) {
     //if (size != (2 * sizeof(int) + ((width * height) / 8) + ((width * height) % 8))) {
     //    throw std::runtime_error(std::string("The file is corrupted!"));
     //}
-    std::cout <<  2 * sizeof(int) + ((width * height) / 8);
     Grid g(width, height);
 
     // Calculating padding value
-    int padding, loopValue;
+    int padding = 0;
+    int loopValue;
     if (width * height % 8 != 0) {
         // padding indicates a number of bits needed to finish the byte
         padding = width * height % 8;
@@ -330,6 +330,14 @@ Grid Zoo::load_binary(std::string path) {
     } else {
         loopValue = width * height / 8;
     }
+
+    //Checking rather the file ends unexpectedly or no
+    int minimal_expected_file_size = (2 * sizeof(int)) + ((width * height + padding) / 8);
+    if (size < minimal_expected_file_size) {
+        throw std::runtime_error(std::string("File Ends unexpectedly!"));
+
+    }
+
     // A container for every byte, initialized with empty strings
     std::vector<std::string> bytes(loopValue, "");
     // Reading bytes corresponding to the grid (without the padding)
@@ -343,15 +351,7 @@ Grid Zoo::load_binary(std::string path) {
             currentByte += std::to_string(((currVal >> b) & 0x1));
         }
         bytes[i] = currentByte;
-        std::cout << std::endl;
     }
-    //TODO: Still have no idea about rather we need to reverse bits or not
-    //TODO: but without doing it I get the correct output
-    // Reversing all bytes
-    //for (auto& byte : bytes) {
-    //  std::reverse(byte.begin(),byte.end());
-    //}
-
     // Append all bytes into one string
     std::string byte = "";
     for (unsigned int i = 0; i < bytes.size(); i++) {
