@@ -27,9 +27,8 @@ namespace Zoo {
     Grid glider(); // Draws a glider on a 3x3 grid
     Grid r_pentomino(); // Draws a r_pentomino on a 3x3 grid
     Grid light_weight_spaceship(); // Draws a lightweight spaceship on a 5x4 grid
-    Grid load_ascii(std::string path); // Reads a .gol file containing the grid and produces a Grid obejct
+    Grid load_ascii(std::string path); // Reads a .gol file containing the grid and produces a Grid object
     void save_ascii(std::string path, Grid grid); // Saves a grid in a .gol file
-    void save_binary(std::string path, Grid grid);
-
-    Grid load_binary(std::string path);
+    void save_binary(std::string path, Grid grid); //Saves a grid in a .bgol binary-encoded file
+    Grid load_binary(std::string path); // Reads a .bgol file containing binary-encoded grid and produces a Grid object
 };

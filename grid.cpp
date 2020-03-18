@@ -32,7 +32,8 @@
  *
  */
 
-Grid::Grid() : Grid(0,0){;
+Grid::Grid() : Grid(0, 0) {
+    ;
 }
 
 /**
@@ -58,7 +59,7 @@ Grid::Grid() : Grid(0,0){;
  * @param square_size
  *      The edge size to use for the width and height of the grid.
  */
-Grid::Grid(const int square_size) : Grid(square_size,square_size) {
+Grid::Grid(const int square_size) : Grid(square_size, square_size) {
 
 }
 
@@ -272,12 +273,12 @@ void Grid::resize(const int square_size) {
 
 void Grid::resize(const int new_width, const int new_height) {
     if (this->width == new_width && this->height == new_height) {
-        std::cout<<"The new grid size is the same as the old one!";
+        std::cout << "The new grid size is the same as the old one!";
     }
     //Creating new Grid to store resized data
-    Grid g (new_width,new_height);
+    Grid g(new_width, new_height);
     // If the resized vector is smaller than the original
-    if (new_width*new_height < this->width*this->get_height()) {
+    if (new_width * new_height < this->width * this->get_height()) {
         for (int i = 0; i < new_height; i++) {
             for (int j = 0; j < new_width; j++) {
                 // Mapping 1D representation of a vector to a 2D one
@@ -288,7 +289,7 @@ void Grid::resize(const int new_width, const int new_height) {
                 g(newX, newY) = this->get(j, i);
             }
         }
-    // If the resized vector is larger than the original
+        // Alternatively if the resized vector is larger than the original
     } else {
         for (int i = 0; i < this->height; i++) {
             for (int j = 0; j < this->width; j++) {
@@ -443,7 +444,7 @@ void Grid::set(const int x, const int y, const Cell value) {
  * @throws
  *      std::runtime_error or sub-class if x,y is not a valid coordinate within the grid.
  */
-Cell & Grid::operator()(const int x, const int y) {
+Cell &Grid::operator()(const int x, const int y) {
     try {
         if (x >= this->width || x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
         if (y >= this->height || y < 0) throw std::runtime_error(std::string("y is out of bounds!"));
@@ -532,6 +533,38 @@ Cell &Grid::operator()(const int x, const int y) const {
  *      std::exception or sub-class if x0,y0 or x1,y1 are not valid coordinates within the grid
  *      or if the crop window has a negative size.
  */
+
+Grid Grid::crop(int x0, int y0, int x1, int y1) {
+    if (x0 > this->get_width() ||
+        x1 > this->get_width() ||
+        y0 > this->get_height() ||
+        y1 > this->get_height()) {
+        throw std::runtime_error(std::string("One of the arguments is not a valid coordinate!"));
+    }
+    // Get the size of the new grid
+    int cropped_width = x1 - x0;
+    int cropped_height = y1 - y0;
+    if (cropped_width < 0 || cropped_height < 0) {
+        throw std::runtime_error(std::string("A window has a negative size!"));
+    }
+    Grid g(cropped_width, cropped_height);
+    // j and i represent x and y of the original grid. We start at x0 until x1, at y0 until y1 because this is the part
+    // which should remain in the cropped grid.
+    // new_j and new_i represent x and y of the new grid. We need to fully iterate through it, so we start from 0.
+    for (int i = y0, new_i = 0; i < y1; i++, new_i++) {
+        for (int j = x0, new_j = 0; j < x1; j++, new_j++) {
+            if (this->get(j,i) == Cell::ALIVE) {
+              g(new_j,new_i) = Cell::ALIVE;
+          }
+        }
+    }
+
+    // Updating fields
+    this->width = cropped_width;
+    this->height = cropped_height;
+    this->grid = g.grid;
+    return g;
+}
 
 
 /**
@@ -632,21 +665,21 @@ Cell &Grid::operator()(const int x, const int y) const {
  * @return
  *      Returns a reference to the output stream to enable operator chaining.
  */
-std::ostream & operator<< (std::ostream &os, const Grid &g) {
+std::ostream &operator<<(std::ostream &os, const Grid &g) {
     std::string border = "";
     os << "+";
-    border+="+";
+    border += "+";
     for (int i = 0; i < g.width; i++) {
         os << "-";
-        border+="-";
+        border += "-";
     }
     os << "+" << std::endl;
-    border+="+";
+    border += "+";
 
     for (int i = 0; i < g.height; i++) {
         os << "|";
         for (int j = 0; j < g.width; j++) {
-            if (g.get(j,i) == Cell::ALIVE) {
+            if (g.get(j, i) == Cell::ALIVE) {
                 os << "#";
             } else {
                 os << " ";

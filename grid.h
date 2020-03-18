@@ -56,5 +56,5 @@ public:
     Cell get(const int x, const int y) const;       // Returns the value of the cell at the desired coordinate
     void set(const int x, const int y,
             const Cell value);                // Updates the value of the cell at the desired coordinate
-
+    Grid crop(int x0, int y0, int x1, int y1); // Crops the grid w.r.t specified range
 };

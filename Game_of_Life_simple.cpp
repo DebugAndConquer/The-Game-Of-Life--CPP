@@ -10,20 +10,19 @@
 #include "zoo.h"
 
 int main(int argc, char *argv[]) {
-   Grid g(8,8);
-    for (int y = 0; y < 4; y++) {
-        for (int x = 0; x < 4; x++) {
-
-            g.set(x, y, Cell::ALIVE);
+   Grid g(4);
+   g(0,0) = Cell::ALIVE;
+   g(1,1) = Cell::ALIVE;
+   g(2,2) = Cell::ALIVE;
+   g(1,3) = Cell::ALIVE;
+   /*for (int y = 2; y < 6; y++) {
+        for (int x = 2; x < 6; x++) {
+            g(x, y) = Cell::ALIVE;
         }
-    }
-    std::cout << g << std::endl;
-    g.resize(16,16);
-    std::cout << g << std::endl;
-    g.resize(8,2);
-    std::cout << g << std::endl;
-    g.resize(2,2);
-    std::cout << g << std::endl;
+     }*/
+   std::cout << g << std::endl;
+   g.crop(1,1,3,3);
+   std::cout << g << std::endl;
     /* Grid g(6);
     g(2,1) = Cell::ALIVE;
     g(3,2) = Cell::ALIVE;
