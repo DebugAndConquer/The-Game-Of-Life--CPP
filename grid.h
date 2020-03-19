@@ -19,7 +19,7 @@
  * A Cell is a char limited to two named values for Cell::DEAD and Cell::ALIVE.
  */
 enum Cell : char {
-    DEAD  = ' ',
+    DEAD = ' ',
     ALIVE = '#'
 };
 
@@ -31,30 +31,38 @@ class Grid {
     //      Step 1. Draw a circle.
     //      Step 2. Draw the rest of the owl.
 private:
-    int width,height;
+    int width, height;
     std::vector<Cell> grid;                    // 2D Vector for storing the grid
-   // move get_index here
+    // move get_index here
 public:
     // Public functions
     Grid();                                              // Default Constructor with grid size = 0
     explicit Grid(const int square_size);               // Overloaded Constructor with grid size = squareSize*squareSize
     Grid(const int width, const int height);           // Overloaded Constructor with grid size = width*height
-    Cell& operator() (const int x, const int y);
-    Cell& operator() (const int x, const int y) const;
+    Cell &operator()(const int x, const int y);
 
-    friend std::ostream & operator<< (std::ostream &os, const Grid &g);
+    Cell &operator()(const int x, const int y) const;
+
+    friend std::ostream &operator<<(std::ostream &os, const Grid &g);
 
     // Member Functions
-    int get_index(const int x , const int y) const ;       // Gets 1D index of a 2D coordinate
-    int get_width() const ;
-    int get_height() const ;
-    int get_total_cells() const ;
-    int get_alive_cells() const ;
-    int get_dead_cells() const ;
+    int get_index(const int x, const int y) const;       // Gets 1D index of a 2D coordinate
+    int get_width() const;
+
+    int get_height() const;
+
+    int get_total_cells() const;
+
+    int get_alive_cells() const;
+
+    int get_dead_cells() const;
+
     void resize(const int square_size);             // Resize the grid with new width=height
     void resize(const int new_width, const int new_height); // Resize the grid with new width and new new_height
     Cell get(const int x, const int y) const;       // Returns the value of the cell at the desired coordinate
     void set(const int x, const int y,
-            const Cell value);                // Updates the value of the cell at the desired coordinate
+             const Cell value);                // Updates the value of the cell at the desired coordinate
     Grid crop(int x0, int y0, int x1, int y1); // Crops the grid w.r.t specified range
+    void merge(Grid &other, int x0, int y0); // Merges the other grid into the current one w.r.t x0, y0
+    void merge(Grid &other, int x0, int y0, bool alive_only); // An overloaded variant does not allow alive cells to die
 };

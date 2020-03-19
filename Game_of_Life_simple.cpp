@@ -10,8 +10,16 @@
 #include "zoo.h"
 
 int main(int argc, char *argv[]) {
-    Grid g = Zoo::load_binary("../test_inputs/GLIDER.bgol");
-    std::cout << g << std::endl;
+    Grid w(8);
+    Grid w_a(4);
+    for (int y = 0; y < 4; y++) {
+        for (int x = 0; x < 4; x++) {
+           w_a.set(x, y, Cell::ALIVE);
+        }
+    }
+    std::cout << w << w_a;
+    w.merge(w_a,2,2,true);
+    std::cout << w;
     /* Grid g(6);
     g(2,1) = Cell::ALIVE;
     g(3,2) = Cell::ALIVE;

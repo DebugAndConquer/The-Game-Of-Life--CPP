@@ -33,7 +33,6 @@
  */
 
 Grid::Grid() : Grid(0, 0) {
-    ;
 }
 
 /**
@@ -553,9 +552,9 @@ Grid Grid::crop(int x0, int y0, int x1, int y1) {
     // new_j and new_i represent x and y of the new grid. We need to fully iterate through it, so we start from 0.
     for (int i = y0, new_i = 0; i < y1; i++, new_i++) {
         for (int j = x0, new_j = 0; j < x1; j++, new_j++) {
-            if (this->get(j,i) == Cell::ALIVE) {
-              g(new_j,new_i) = Cell::ALIVE;
-          }
+            if (this->get(j, i) == Cell::ALIVE) {
+                g(new_j, new_i) = Cell::ALIVE;
+            }
         }
     }
 
@@ -604,8 +603,47 @@ Grid Grid::crop(int x0, int y0, int x1, int y1) {
  * @throws
  *      std::exception or sub-class if the other grid being placed does not fit within the bounds of the current grid.
  */
+void Grid::merge(Grid &other, int x0, int y0) {
+    if (other.get_width() > this->get_width() || other.get_height() > this->get_height()) {
+        throw std::runtime_error(std::string("The other grid doesn't fit within the bounds of the current one!"));
+    }
+    // i and j keep track of indexes in the original grid, new_i and new_j keep track of indexes in the other grid
+    for (int i = y0, new_i = 0; new_i < other.get_height(); i++, new_i++) {
+        for (int j = x0, new_j = 0; new_j < other.get_width(); j++, new_j++) {
+            //Set current cell to alive if matching cell from the other grid is alive
+            if (other.get(new_j, new_i) == Cell::ALIVE) {
+                (*this)(j, i) = Cell::ALIVE;
+            } else {
+                (*this)(j, i) = Cell::DEAD;
+            }
+        }
+    }
 
-
+}
+// Overloaded version does not allow alive cells to become dead
+void Grid::merge(Grid &other, int x0, int y0, bool alive_only) {
+    if (!alive_only) {
+        merge(other, x0, y0);
+    } else {
+        if (other.get_width() > this->get_width() || other.get_height() > this->get_height()) {
+            throw std::runtime_error(std::string
+                                             ("The other grid doesn't fit within the bounds of the current one!"));
+        }
+        // i and j keep track of indexes in the original grid, new_i and new_j keep track of indexes in the other grid
+        for (int i = y0, new_i = 0; new_i < other.get_height(); i++, new_i++) {
+            for (int j = x0, new_j = 0; new_j < other.get_width(); j++, new_j++) {
+                // if current cell is alive but the other is dead, don't change anything
+                // if current cell is dead but the other is alive, make current alive
+                if ((other.get(new_j, new_i) == Cell::DEAD && this->get(j, i) == Cell::ALIVE) ||
+                    (other.get(new_j, new_i) == Cell::ALIVE && this->get(j, i) == Cell::DEAD)) {
+                    (*this)(j, i) = Cell::ALIVE;
+                } else {
+                    (*this)(j, i) = Cell::DEAD;
+                }
+            }
+        }
+    }
+}
 /**
  * Grid::rotate(rotation)
  *
