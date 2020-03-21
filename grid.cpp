@@ -443,7 +443,7 @@ void Grid::set(const int x, const int y, const Cell value) {
  * @throws
  *      std::runtime_error or sub-class if x,y is not a valid coordinate within the grid.
  */
-Cell &Grid::operator()(const int x, const int y) {
+Cell & Grid::operator()(const int x, const int y) {
     try {
         if (x >= this->width || x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
         if (y >= this->height || y < 0) throw std::runtime_error(std::string("y is out of bounds!"));
@@ -485,7 +485,7 @@ Cell &Grid::operator()(const int x, const int y) {
  *      std::exception or sub-class if x,y is not a valid coordinate within the grid.
  */
 
-Cell &Grid::operator()(const int x, const int y) const {
+Cell & Grid::operator()(const int x, const int y) const {
     try {
         if (x >= this->width || x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
         if (y >= this->height || y < 0) throw std::runtime_error(std::string("y is out of bounds!"));

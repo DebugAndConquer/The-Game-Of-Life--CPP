@@ -22,6 +22,7 @@
  * @date March, 2020
  */
 #include "world.h"
+#include <algorithm>
 
 // Include the minimal number of headers needed to support your implementation.
 // #include ...
@@ -37,7 +38,8 @@
  *      World world;
  *
  */
-
+World::World() : World(0, 0) {
+}
 
 /**
  * World::World(square_size)
@@ -58,7 +60,8 @@
  * @param square_size
  *      The edge size to use for the width and height of the world.
  */
-
+World::World(int square_size) : World(square_size, square_size) {
+}
 
 /**
  * World::World(width, height)
@@ -75,7 +78,8 @@
  * @param height
  *      The height of the world.
  */
-
+World::World(int width, int height) : current(Grid(width, height)), next(Grid(width, height)) {
+}
 
 /**
  * World::World(initial_state)
@@ -96,7 +100,9 @@
  * @param initial_state
  *      The state of the constructed world.
  */
+World::World(Grid initial_state) : current(initial_state), next(initial_state.get_width(), initial_state.get_height()) {
 
+}
 
 /**
  * World::get_width()
@@ -121,7 +127,9 @@
  * @return
  *      The width of the world.
  */
-
+int World::get_width() const {
+    return this->current.get_width();
+}
 
 /**
  * World::get_height()
@@ -146,7 +154,9 @@
  * @return
  *      The height of the world.
  */
-
+int World::get_height() const {
+    return this->current.get_height();
+}
 
 /**
  * World::get_total_cells()
@@ -171,6 +181,9 @@
  * @return
  *      The number of total cells.
  */
+int World::get_total_cells() const {
+    return this->current.get_total_cells();
+}
 
 
 /**
@@ -196,7 +209,9 @@
  * @return
  *      The number of alive cells.
  */
-
+int World::get_alive_cells() const {
+    return this->current.get_alive_cells();
+}
 
 /**
  * World::get_dead_cells()
@@ -221,7 +236,9 @@
  * @return
  *      The number of dead cells.
  */
-
+int World::get_dead_cells() const {
+    return (this->get_total_cells() - this->get_alive_cells());
+}
 
 /**
  * World::get_state()
@@ -247,7 +264,10 @@
  * @return
  *      A reference to the current state.
  */
-
+Grid &World::get_state() const {
+    const Grid &res = this->current;
+    return const_cast<Grid &>(res);
+}
 
 /**
  * World::resize(square_size)
@@ -268,7 +288,9 @@
  * @param square_size
  *      The new edge size for both the width and height of the grid.
  */
-
+void World::resize(int square_size) {
+    this->resize(square_size, square_size);
+}
 
 /**
  * World::resize(new_width, new_height)
@@ -292,7 +314,10 @@
  * @param new_height
  *      The new height for the grid.
  */
-
+void World::resize(int new_width, int new_height) {
+    this->current.resize(new_width, new_height);
+    this->next = Grid(new_width, new_height);
+}
 
 /**
  * World::count_neighbours(x, y, toroidal)
@@ -325,12 +350,59 @@
  * @return
  *      Returns the number of alive neighbours.
  */
+int World::count_alive_neighbours(int x, int y, bool toroidal) {
+    Grid neighbours = Grid(3);
+    // Center cell should be dead because it can't be its own neighbour
+    neighbours(1, 1) = Cell::DEAD;
+    // Try to assign a proper value, if the index doesn't exist assign it to a dead cell / find a value w.r.t
+    // toroidal method. new_i and new_j is difference in coordinates between center and current cell
+    for (int i = 0, new_i = -1; i < neighbours.get_height(); i++, new_i++) {
+        for (int j = 0, new_j = -1; j < neighbours.get_width(); j++, new_j++) {
+            if (!(i == 1 && j == 1)) { //Skip the center cell
+                // Check rather the coordinate is in bounds
+                if ((x + new_j >= this->current.get_width() || x + new_j < 0) ||
+                    (y + new_i >= this->current.get_height() || y + new_i < 0)) {
+                    if (!toroidal) {
+                        neighbours(j, i) = Cell::DEAD;
+                    } else {
+                        // Treat the grid as a torus using the formula
+                        // These are going to be mapped coordinates w.r.t toroidal representation
+                        int toroidal_i, toroidal_j;
+                        // Offset is needed to catch both "overflow" and "underflow" situations
+                        int offset = 1;
 
+                        if (x + new_j < 0) { // "Underflow" situation
+                            offset = (-(x + new_j) / get_width()) + 1;
+                        }
+                        // "Overflow" situation is controlled by offset set to 1
+                        toroidal_j = (x + new_j + get_width() * offset) % get_width();
+
+                        offset = 1; // Resetting the value for the second use
+
+                        if (y + new_i < 0) { // "Underflow" situation
+                            offset = (-(y + new_i) / get_height()) + 1;
+                        }
+                        // "Overflow" situation is controlled by offset set to 1
+                        toroidal_i = (y + new_i + get_height() * offset) % get_height();
+
+
+                        neighbours(j, i) = this->current(toroidal_j, toroidal_i);
+                    }
+                } else {
+                    // Coordinates are inside the bounds
+                    neighbours(j, i) = this->current(x + new_j, y + new_i);
+                }
+            }
+        }
+    }
+    return neighbours.get_alive_cells();
+}
 
 /**
  * World::step(toroidal)
  *
  * Take one step in Conway's Game of Life.
+
  *
  * Reads from the current state grid and writes to the next state grid. Then swaps the grids.
  * Should be implemented by invoking World::count_neighbours(x, y, toroidal).
@@ -347,7 +419,29 @@
  *      Optional parameter. If true then the step will consider the grid as a torus, where the left edge
  *      wraps to the right edge and the top to the bottom. Defaults to false.
  */
+void World::step(bool toroidal) {
+    this->next = this->current;
+    for (int i = 0; i < this->get_height(); i++) {
+        for (int j = 0; j < this->get_width(); j++) {
+            if (this->current(j, i) == Cell::DEAD) {
+                // A dead cell with 3 neighbours becomes alive
+                if (count_alive_neighbours(j, i, toroidal) == 3) {
+                    this->next(j, i) = Cell::ALIVE;
+                }
+            } else {
+                //If less a number of neighbours is <2 or >3 ad the cell is alive, it becomes dead
+                if (count_alive_neighbours(j, i, toroidal) < 2 || count_alive_neighbours(j, i, toroidal) > 3) {
+                    this->next(j, i) = Cell::DEAD;
+                }
+            }
+        }
+    }
+    std::swap(this->current, this->next);
+}
 
+void World::step() {
+    this->step(false);
+}
 
 /**
  * World::advance(steps, toroidal)
@@ -362,3 +456,12 @@
  *      Optional parameter. If true then the step will consider the grid as a torus, where the left edge
  *      wraps to the right edge and the top to the bottom. Defaults to false.
  */
+void World::advance(int steps, bool toroidal) {
+    for (int i = 0; i < steps; i++) {
+        this->step(toroidal);
+    }
+}
+
+void World::advance(int steps) {
+    this->advance(steps, false);
+}
