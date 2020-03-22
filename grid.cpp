@@ -447,6 +447,7 @@ Cell & Grid::operator()(const int x, const int y) {
     try {
         if (x >= this->width || x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
         if (y >= this->height || y < 0) throw std::runtime_error(std::string("y is out of bounds!"));
+        //if (y >= this->height || y < 0) throw std::runtime_error(std::string(std::to_string(y)));
     } catch (const std::runtime_error &e) {
         std::cout << "Runtime error: " << e.what() << std::endl;
     }
@@ -534,10 +535,10 @@ Cell & Grid::operator()(const int x, const int y) const {
  */
 
 Grid Grid::crop(int x0, int y0, int x1, int y1) {
-    if (x0 > this->get_width() ||
-        x1 > this->get_width() ||
-        y0 > this->get_height() ||
-        y1 > this->get_height()) {
+    if (x0 > this->get_width() || x0 < 0 ||
+        x1 > this->get_width() || x1 < 0 ||
+        y0 > this->get_height() || y0 < 0 ||
+        y1 > this->get_height() || y1 < 0) {
         throw std::runtime_error(std::string("One of the arguments is not a valid coordinate!"));
     }
     // Get the size of the new grid
@@ -607,6 +608,9 @@ void Grid::merge(Grid &other, int x0, int y0) {
     if (other.get_width() > this->get_width() || other.get_height() > this->get_height()) {
         throw std::runtime_error(std::string("The other grid doesn't fit within the bounds of the current one!"));
     }
+    if ((x0 < 0 || x0 > this->get_width()) || y0 < 0 || y0 > this->get_width()) {
+        throw std::runtime_error(std::string("Either x or y is has a non-reasonable value!"));
+    }
     // i and j keep track of indexes in the original grid, new_i and new_j keep track of indexes in the other grid
     for (int i = y0, new_i = 0; new_i < other.get_height(); i++, new_i++) {
         for (int j = x0, new_j = 0; new_j < other.get_width(); j++, new_j++) {
@@ -628,6 +632,9 @@ void Grid::merge(Grid &other, int x0, int y0, bool alive_only) {
         if (other.get_width() > this->get_width() || other.get_height() > this->get_height()) {
             throw std::runtime_error(std::string
                                              ("The other grid doesn't fit within the bounds of the current one!"));
+        }
+        if ((x0 < 0 || x0 > this->get_width()) || y0 < 0 || y0 > this->get_width()) {
+            throw std::runtime_error(std::string("Either x or y is has a non-reasonable value!"));
         }
         // i and j keep track of indexes in the original grid, new_i and new_j keep track of indexes in the other grid
         for (int i = y0, new_i = 0; new_i < other.get_height(); i++, new_i++) {

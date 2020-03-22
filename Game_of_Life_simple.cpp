@@ -10,20 +10,9 @@
 #include "zoo.h"
 
 int main(int argc, char *argv[]) {
-
-    Grid g(6);
-
-    g.set(1, 3, Cell::ALIVE);
-    g.set(2, 3, Cell::ALIVE);
-    g.set(3, 3, Cell::ALIVE);
-    g.set(3, 2, Cell::ALIVE);
-    g.set(2, 1, Cell::ALIVE);
-    std::cout << g << g.get_alive_cells() << std::endl;
-    World w(g);
-    for (int i = 0; i < 12; i++) {
-        w.step(true);
-    }
-    std::cout << w.get_alive_cells();
+    Grid a(4,3);
+    Grid h = a.rotate(-2);
+    std::cout << h << std::endl;
 
     //Zoo::save_binary(R"(../test_inputs/myG.bgol)",g);*/
     //Grid g1 = Zoo::load_binary(R"(../test_inputs/GLIDER.bgol)");

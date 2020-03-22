@@ -24,6 +24,7 @@
 #include <string>
 #include <fstream>
 #include <algorithm>
+#include <bitset>
 #include "zoo.h"
 #include "grid.h"
 
@@ -314,9 +315,7 @@ Grid Zoo::load_binary(std::string path) {
 
     // The size of file should be 2*sizeof(int) for w and h +
     // number of bytes to store w*h bits + number of padding bytes
-    //if (size != (2 * sizeof(int) + ((width * height) / 8) + ((width * height) % 8))) {
-    //    throw std::runtime_error(std::string("The file is corrupted!"));
-    //}
+
     Grid g(width, height);
 
     // Calculating padding value
@@ -332,7 +331,7 @@ Grid Zoo::load_binary(std::string path) {
     }
 
     //Checking rather the file ends unexpectedly or no
-    int minimal_expected_file_size = (2 * sizeof(int)) + ((width * height + padding) / 8);
+    unsigned int minimal_expected_file_size = (2 * sizeof(int)) + ((width * height + padding) / 8);
     if (size < minimal_expected_file_size) {
         throw std::runtime_error(std::string("File Ends unexpectedly!"));
 
@@ -364,7 +363,10 @@ Grid Zoo::load_binary(std::string path) {
             // Get x, y using the idx
             int x = i % width;
             int y = (i - x) / width;
-            g(x, y) = Cell::ALIVE;
+            // Assertation to not go outside the bounds of the grid
+            if (!(x == width || y == height)) {
+                g(x, y) = Cell::ALIVE;
+            }
         }
     }
     bFile.close();
@@ -409,22 +411,38 @@ void Zoo::save_binary(std::string path, Grid grid) {
     }
     int width = grid.get_width();
     int height = grid.get_height();
-    char alive = '1';
-    char dead = '0';
+    std::bitset<8> bitset; // A convenient container for 8 bit values
 
     // Write width and height to a file
     file.write((char *) &width, sizeof(int));
     file.write((char *) &height, sizeof(int));
+    // A counter which keeps track of bit we are currently focusing on
+    int bitset_count = 0;
+    int padding = width * height % 8;
+    unsigned int content_bytes = (width * height + padding) / 8 ;
+    unsigned int current_bytes = 0;
 
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             if (grid(j, i) == Cell::ALIVE) {
-                file.write((char *) &alive, sizeof(char));
+                bitset[bitset_count] = 1;
             } else {
-                file.write((char *) &dead, sizeof(char));
+                bitset[bitset_count] = 0;
+            }
+            bitset_count++;
+            if (bitset_count == 8 || (content_bytes - current_bytes == 1)) {
+                // Counting the byte size of content. When the difference between the actual size and a current one
+                // will be 1, it will mean that only padding is left to be written to a file.
+                if (bitset_count == 8) {
+                    current_bytes++;
+                }
+                file.write((char *) &bitset, sizeof(char));
+                bitset_count = 0;
             }
         }
     }
 
     file.close();
 }
+
+

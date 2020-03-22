@@ -65,4 +65,5 @@ public:
     Grid crop(int x0, int y0, int x1, int y1); // Crops the grid w.r.t specified range
     void merge(Grid &other, int x0, int y0); // Merges the other grid into the current one w.r.t x0, y0
     void merge(Grid &other, int x0, int y0, bool alive_only); // An overloaded variant does not allow alive cells to die
+    Grid rotate(int rotation) const;
 };
