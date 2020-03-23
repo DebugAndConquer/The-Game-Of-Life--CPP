@@ -100,7 +100,7 @@ World::World(int width, int height) : current(Grid(width, height)), next(Grid(wi
  * @param initial_state
  *      The state of the constructed world.
  */
-World::World(Grid initial_state) : current(initial_state), next(initial_state.get_width(), initial_state.get_height()) {
+World::World(Grid &initial_state) : current(initial_state), next(initial_state.get_width(), initial_state.get_height()) {
 
 }
 

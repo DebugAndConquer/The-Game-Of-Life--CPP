@@ -10,8 +10,6 @@
  */
 #pragma once
 
-// Add the minimal number of includes you need in order to declare the class.
-// #include ...
 #include <iostream>
 #include <vector>
 
@@ -27,43 +25,34 @@ enum Cell : char {
  * Declare the structure of the Grid class for representing a 2d grid of cells.
  */
 class Grid {
-    // How to draw an owl:
-    //      Step 1. Draw a circle.
-    //      Step 2. Draw the rest of the owl.
 private:
     int width, height;
-    std::vector<Cell> grid;                    // 2D Vector for storing the grid
-    // move get_index here
+    std::vector<Cell> grid;                                  // 2D Vector for storing the grid
+    int get_index(int x, int y) const;                      // Gets 1D index of a 2D coordinate
 public:
     // Public functions
     Grid();                                              // Default Constructor with grid size = 0
-    explicit Grid(const int square_size);               // Overloaded Constructor with grid size = squareSize*squareSize
-    Grid(const int width, const int height);           // Overloaded Constructor with grid size = width*height
-    Cell &operator()(const int x, const int y);
-
-    Cell &operator()(const int x, const int y) const;
-
+    explicit Grid(int square_size);                     // Overloaded Constructor with grid size = squareSize*squareSize
+    Grid(int width, int height);                       // Overloaded Constructor with grid size = width*height
+    Cell &operator()(int x, int y);
+    Cell &operator()(int x, int y) const;
     friend std::ostream &operator<<(std::ostream &os, const Grid &g);
 
     // Member Functions
-    int get_index(const int x, const int y) const;       // Gets 1D index of a 2D coordinate
     int get_width() const;
-
     int get_height() const;
-
     int get_total_cells() const;
-
     int get_alive_cells() const;
-
     int get_dead_cells() const;
-
-    void resize(const int square_size);             // Resize the grid with new width=height
-    void resize(const int new_width, const int new_height); // Resize the grid with new width and new new_height
-    Cell get(const int x, const int y) const;       // Returns the value of the cell at the desired coordinate
-    void set(const int x, const int y,
-             const Cell value);                // Updates the value of the cell at the desired coordinate
-    Grid crop(int x0, int y0, int x1, int y1); // Crops the grid w.r.t specified range
-    void merge(Grid &other, int x0, int y0); // Merges the other grid into the current one w.r.t x0, y0
-    void merge(Grid &other, int x0, int y0, bool alive_only); // An overloaded variant does not allow alive cells to die
+    void resize(int square_size);
+    void resize(int new_width, int new_height);
+    Cell get(int x, int y) const;                             // Returns the value of the cell at the desired coordinate
+    void set(int x, int y, Cell value);                      // Updates the value of the cell at the desired coordinate
+    Grid crop(int x0, int y0, int x1, int y1);              // Crops the grid w.r.t specified range
+    void merge(const Grid& other, int x0, int y0);         // Merges the other grid into the current one w.r.t x0, y0
+    // An overloaded variant does not allow alive cells to die
+    void merge(const Grid &other, int x0, int y0, bool alive_only);
     Grid rotate(int rotation) const;
+
+
 };

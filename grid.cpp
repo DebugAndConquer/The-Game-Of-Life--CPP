@@ -8,16 +8,13 @@
  *
  * You are encouraged to use STL container types as an underlying storage mechanism for the grid cells.
  *
- * @author YOUR_STUDENT_NUMBER
+ * @author 965217
  * @date March, 2020
  */
-// Include the minimal number of headers needed to support your implementation.
-// #include ...
 #include "grid.h"
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <cmath>
 
 /**
  * Grid::Grid()
@@ -59,7 +56,6 @@ Grid::Grid() : Grid(0, 0) {
  *      The edge size to use for the width and height of the grid.
  */
 Grid::Grid(const int square_size) : Grid(square_size, square_size) {
-
 }
 
 /**
@@ -79,7 +75,7 @@ Grid::Grid(const int square_size) : Grid(square_size, square_size) {
  *      The height of the grid.
  */
 Grid::Grid(const int width, const int height) : width(width), height(height) {
-    // If the grid is of size 0*0 then it doesnt exist
+    // If the grid is of size 0*0 then it's simply empty
     if (this->width == 0 && this->height == 0) {
         this->grid.empty();
     } else {
@@ -194,7 +190,6 @@ int Grid::get_total_cells() const {
  *      The number of alive cells.
  */
 int Grid::get_alive_cells() const {
-    //const int alive = std::count(this->grid.begin(),this->grid.end(),Cell::ALIVE);
     int sum = std::count(grid.begin(), grid.end(), Cell::ALIVE);
     return sum;
 }
@@ -288,7 +283,7 @@ void Grid::resize(const int new_width, const int new_height) {
                 g(newX, newY) = this->get(j, i);
             }
         }
-        // Alternatively if the resized vector is larger than the original
+    // Alternatively if the resized vector is larger than the original
     } else {
         for (int i = 0; i < this->height; i++) {
             for (int j = 0; j < this->width; j++) {
@@ -358,13 +353,9 @@ int Grid::get_index(const int x, const int y) const {
  */
 
 Cell Grid::get(const int x, const int y) const {
-    try {
-        if (x >= this->width || x < 0) throw std::exception();
-        if (y >= this->height || y < 0) throw std::exception();
+    if (x >= this->width || x < 0) throw std::exception();
+    if (y >= this->height || y < 0) throw std::exception();
 
-    } catch (const std::exception &e) {
-        std::cout << e.what() << std::endl;
-    }
     Cell value = (*this)(x, y);
     return value;
 }
@@ -398,14 +389,9 @@ Cell Grid::get(const int x, const int y) const {
  */
 
 void Grid::set(const int x, const int y, const Cell value) {
-    try {
-        if (x >= this->width || x < 0) throw std::exception();
-        if (y >= this->height || y < 0) throw std::exception();
-        this->operator()(x, y) = value;
-    } catch (const std::exception &e) {
-        std::cout << e.what() << std::endl;
-    }
-
+    if (x >= this->width || x < 0) throw std::exception();
+    if (y >= this->height || y < 0) throw std::exception();
+    this->operator()(x, y) = value;
 }
 
 /**
@@ -443,14 +429,10 @@ void Grid::set(const int x, const int y, const Cell value) {
  * @throws
  *      std::runtime_error or sub-class if x,y is not a valid coordinate within the grid.
  */
-Cell & Grid::operator()(const int x, const int y) {
-    try {
-        if (x >= this->width || x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
-        if (y >= this->height || y < 0) throw std::runtime_error(std::string("y is out of bounds!"));
-        //if (y >= this->height || y < 0) throw std::runtime_error(std::string(std::to_string(y)));
-    } catch (const std::runtime_error &e) {
-        std::cout << "Runtime error: " << e.what() << std::endl;
-    }
+Cell &Grid::operator()(const int x, const int y) {
+    if (x >= this->width || x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
+    if (y >= this->height || y < 0) throw std::runtime_error(std::string("y is out of bounds!"));
+
     int t = this->get_index(x, y);
     return grid[t];
 }
@@ -486,13 +468,10 @@ Cell & Grid::operator()(const int x, const int y) {
  *      std::exception or sub-class if x,y is not a valid coordinate within the grid.
  */
 
-Cell & Grid::operator()(const int x, const int y) const {
-    try {
-        if (x >= this->width || x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
-        if (y >= this->height || y < 0) throw std::runtime_error(std::string("y is out of bounds!"));
-    } catch (const std::runtime_error &e) {
-        std::cout << "Runtime error: " << e.what();
-    }
+Cell &Grid::operator()(const int x, const int y) const {
+    if (x >= this->width || x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
+    if (y >= this->height || y < 0) throw std::runtime_error(std::string("y is out of bounds!"));
+
     int t = this->get_index(x, y);
     const Cell &res = grid[t];
     return const_cast<Cell &>(res);
@@ -604,7 +583,7 @@ Grid Grid::crop(int x0, int y0, int x1, int y1) {
  * @throws
  *      std::exception or sub-class if the other grid being placed does not fit within the bounds of the current grid.
  */
-void Grid::merge(Grid &other, int x0, int y0) {
+void Grid::merge(const Grid& other, int x0, int y0) {
     if (other.get_width() > this->get_width() || other.get_height() > this->get_height()) {
         throw std::runtime_error(std::string("The other grid doesn't fit within the bounds of the current one!"));
     }
@@ -624,8 +603,9 @@ void Grid::merge(Grid &other, int x0, int y0) {
     }
 
 }
+
 // Overloaded version does not allow alive cells to become dead
-void Grid::merge(Grid &other, int x0, int y0, bool alive_only) {
+void Grid::merge(const Grid& other, int x0, int y0, bool alive_only) {
     if (!alive_only) {
         merge(other, x0, y0);
     } else {

@@ -13,17 +13,10 @@
 #include <algorithm>
 #include "grid.h"
 
-// Add the minimal number of includes you need in order to declare the namespace.
-// #include ...
-
 /**
  * Declare the interface of the Zoo namespace for constructing lifeforms and saving and loading them from file.
  */
 namespace Zoo {
-    // How to draw an owl:
-    //      Step 1. Draw a circle.
-    //      Step 2. Draw the rest of the owl.
-
     Grid glider(); // Draws a glider on a 3x3 grid
     Grid r_pentomino(); // Draws a r_pentomino on a 3x3 grid
     Grid light_weight_spaceship(); // Draws a lightweight spaceship on a 5x4 grid

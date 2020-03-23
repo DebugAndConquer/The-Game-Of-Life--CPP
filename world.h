@@ -29,38 +29,21 @@ private:
 
 public:
     World(int width, int height);
-
     explicit World(int square_size);
-
-    explicit World(Grid initial_state);
-
+    explicit World(Grid &initial_state);
     World();
 
     // Member functions
     int get_width() const;
-
     int get_height() const;
-
     int get_total_cells() const;
-
     int get_alive_cells() const;
-
     int get_dead_cells() const;
-
-    Grid &get_state() const;
-
+    Grid &get_state() const;                                     // A reference to the grid with current state
     void resize(int new_width, int new_height);
-
     void resize(int square_size);
-
-    void step(bool toroidal);
-
+    void step(bool toroidal);                                 // Perform a 1 step in Conway's Game of Life
     void step();
-
-    void advance(int steps, bool toroidal);
-
+    void advance(int steps, bool toroidal);                 // Perform multiple steps in Conway's Game of Life
     void advance(int steps);
-
-
-
 };
