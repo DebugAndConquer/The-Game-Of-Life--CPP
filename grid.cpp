@@ -15,6 +15,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 
 /**
  * Grid::Grid()
@@ -283,7 +284,7 @@ void Grid::resize(const int new_width, const int new_height) {
                 g(newX, newY) = this->get(j, i);
             }
         }
-    // Alternatively if the resized vector is larger than the original
+        // Alternatively if the resized vector is larger than the original
     } else {
         for (int i = 0; i < this->height; i++) {
             for (int j = 0; j < this->width; j++) {
@@ -470,7 +471,8 @@ Cell &Grid::operator()(const int x, const int y) {
 
 Cell &Grid::operator()(const int x, const int y) const {
     if (x >= this->width || x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
-    if (y >= this->height || y < 0) throw std::runtime_error(std::string("y is out of bounds!"));
+
+    if (y >= this->height || y < 0) throw std::runtime_error(std::string(std::to_string(y)));
 
     int t = this->get_index(x, y);
     const Cell &res = grid[t];
@@ -583,7 +585,7 @@ Grid Grid::crop(int x0, int y0, int x1, int y1) {
  * @throws
  *      std::exception or sub-class if the other grid being placed does not fit within the bounds of the current grid.
  */
-void Grid::merge(const Grid& other, int x0, int y0) {
+void Grid::merge(const Grid &other, int x0, int y0) {
     if (other.get_width() > this->get_width() || other.get_height() > this->get_height()) {
         throw std::runtime_error(std::string("The other grid doesn't fit within the bounds of the current one!"));
     }
@@ -605,7 +607,7 @@ void Grid::merge(const Grid& other, int x0, int y0) {
 }
 
 // Overloaded version does not allow alive cells to become dead
-void Grid::merge(const Grid& other, int x0, int y0, bool alive_only) {
+void Grid::merge(const Grid &other, int x0, int y0, bool alive_only) {
     if (!alive_only) {
         merge(other, x0, y0);
     } else {
@@ -631,6 +633,7 @@ void Grid::merge(const Grid& other, int x0, int y0, bool alive_only) {
         }
     }
 }
+
 /**
  * Grid::rotate(rotation)
  *
@@ -653,7 +656,6 @@ void Grid::merge(const Grid& other, int x0, int y0, bool alive_only) {
  * @return
  *      Returns a copy of the grid that has been rotated.
  */
-
 
 /**
  * operator<<(output_stream, grid)
@@ -691,7 +693,7 @@ void Grid::merge(const Grid& other, int x0, int y0, bool alive_only) {
  *      Returns a reference to the output stream to enable operator chaining.
  */
 std::ostream &operator<<(std::ostream &os, const Grid &g) {
-    std::string border = "";
+    std::string border;
     os << "+";
     border += "+";
     for (int i = 0; i < g.width; i++) {

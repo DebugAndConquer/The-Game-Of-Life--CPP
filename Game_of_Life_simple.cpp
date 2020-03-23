@@ -10,7 +10,6 @@
 #include "zoo.h"
 
 int main(int argc, char *argv[]) {
-
     // Start with an empty grid
     Grid grid(32, 10);
 

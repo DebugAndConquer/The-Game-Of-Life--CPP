@@ -25,8 +25,8 @@
 #include <fstream>
 #include <algorithm>
 #include <bitset>
-#include "zoo.h"
 #include "grid.h"
+#include "zoo.h"
 
 
 // Include the minimal number of headers needed to support your implementation.
@@ -159,61 +159,47 @@ Grid Zoo::light_weight_spaceship() {
  *
  */
 
-Grid Zoo::load_ascii(std::string path) {
+Grid Zoo::load_ascii(const std::string &path) {
     std::string data;
     std::ifstream file;
-    try {
-        file.open(path);
-        // Throw an exception if the file cannot be opened.
-        if (!file.good()) {
-            throw std::runtime_error(std::string("Error Opening file"));
-        }
-    } catch (const std::exception &e) {
-        std::cerr << e.what() << std::endl;
-        exit(1);
+    file.open(path);
+
+    // Throw an exception if the file cannot be opened.
+    if (!file.good()) {
+        throw std::runtime_error(std::string("Error Opening file"));
     }
 
-    int width, height = 0;
+    int width = 0, height = 0;
     if (file >> data) {
         width = stoi(data);
         file >> height;
     }
     // Throw an exception if width or height are non-positive
-    try {
-        if (width <= 0 || height <= 0) {
-            throw std::runtime_error(std::string("Wrong width or height"));
-        }
-    } catch (const std::exception &e) {
-        std::cerr << e.what() << std::endl;
-        exit(1);
-
+    if (width <= 0 || height <= 0) {
+        throw std::runtime_error(std::string("Wrong width or height"));
     }
+
     Grid g(width, height);
     //Skipping the first line before the loop
     std::getline(file, data);
     // Throw an exception if a cell is not either DEAD or ALIVE or if newline char is missing
-    try {
-        for (int i = 0; i < height; i++) {
-            std::getline(file, data);
-            for (int j = 0; j < width; j++) {
-                if (data[0] == '#') {
-                    g(j, i) = Cell::ALIVE;
-                } else if (data[0] != ' ') {
-                    throw std::runtime_error(std::string("Corrupted ASCII file!"));
-                }
-                // Delete first element of the line
-                data.erase(0, 1);
-            }
-            // Throws an exception if \n is missing
-            if ((int) data.back() != 0) {
-                throw std::runtime_error(std::string("Missing newline character!"));
-            }
-        }
-    } catch (const std::exception &e) {
-        std::cerr << e.what() << std::endl;
-        exit(1);
-    }
 
+    for (int i = 0; i < height; i++) {
+        std::getline(file, data);
+        for (int j = 0; j < width; j++) {
+            if (data[0] == '#') {
+                g(j, i) = Cell::ALIVE;
+            } else if (data[0] != ' ') {
+                throw std::runtime_error(std::string("Corrupted ASCII file!"));
+            }
+            // Delete first element of the line
+            data.erase(0, 1);
+        }
+        // Throws an exception if \n is missing
+        if ((int) data.back() != 0) {
+            throw std::runtime_error(std::string("Missing newline character!"));
+        }
+    }
     file.close();
     return g;
 }
@@ -248,7 +234,7 @@ Grid Zoo::load_ascii(std::string path) {
  *      Throws std::runtime_error or sub-class if the file cannot be opened.
  */
 
-void Zoo::save_ascii(std::string path, Grid grid) {
+void Zoo::save_ascii(const std::string &path, Grid &grid) {
     std::ofstream file;
     file.open(path);
     // Throw an exception if a file cannot be opened
@@ -296,7 +282,7 @@ void Zoo::save_ascii(std::string path, Grid grid) {
  *          - The file cannot be opened.
  *          - The file ends unexpectedly.
  */
-Grid Zoo::load_binary(std::string path) {
+Grid Zoo::load_binary(const std::string &path) {
     std::ifstream bFile;
     bFile.open(path, std::ios::in | std::ios::binary);
     if (!bFile.good()) {
@@ -344,17 +330,17 @@ Grid Zoo::load_binary(std::string path) {
         unsigned char currVal;
         bFile.read(reinterpret_cast<char *>(&currVal), sizeof(char));
         // A current byte we are reading
-        std::string currentByte = "";
-        for (int b = 0; b < 8; b++) {
+        std::string currentByte;
+        for (unsigned int b = 0; b < 8; b++) {
             // += syntax will create our current byte by adding each bit separately
             currentByte += std::to_string(((currVal >> b) & 0x1));
         }
         bytes[i] = currentByte;
     }
     // Append all bytes into one string
-    std::string byte = "";
-    for (unsigned int i = 0; i < bytes.size(); i++) {
-        byte += bytes[i];
+    std::string byte;
+    for (const auto &i : bytes) {
+        byte += i;
     }
 
     // Write the data to the Grid structure
@@ -402,7 +388,7 @@ Grid Zoo::load_binary(std::string path) {
  *      Throws std::runtime_error or sub-class if the file cannot be opened.
  */
 
-void Zoo::save_binary(std::string path, Grid grid) {
+void Zoo::save_binary(const std::string &path, Grid &grid) {
     std::ofstream file;
     file.open(path, std::ios::out | std::ios::binary);
     // Throw an exception if a file cannot be opened
@@ -419,7 +405,7 @@ void Zoo::save_binary(std::string path, Grid grid) {
     // A counter which keeps track of bit we are currently focusing on
     int bitset_count = 0;
     int padding = width * height % 8;
-    unsigned int content_bytes = (width * height + padding) / 8 ;
+    unsigned int content_bytes = (width * height + padding) / 8;
     unsigned int current_bytes = 0;
 
     for (int i = 0; i < height; i++) {
