@@ -19,7 +19,7 @@
 
 int main(int argc, char *argv[]) {
 
-/*
+
     cxxopts::Options options("Game_of_Life",
             "This program implements John Conway's Game of Life for Cellular Automaton (circa 1970).");
 
@@ -95,6 +95,6 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // Destructors handle all the memory deallocation*/
+    // Destructors handle all the memory deallocation
     return 0;
 }

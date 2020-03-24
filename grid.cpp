@@ -656,6 +656,55 @@ void Grid::merge(const Grid &other, int x0, int y0, bool alive_only) {
  * @return
  *      Returns a copy of the grid that has been rotated.
  */
+Grid Grid::rotate(int rotation) const {
+    // Note: Time Complexity: O(n^2). Access complexity: O(1) in EVERY CASE except rotation = 0 and multiples.
+    Grid newgrid;
+    int actual_rotation = rotation;
+    // Any rotation can be brought down to 4 cases => 0, 90 ,-90, 180 degrees, so when a user passes e.g 3 (270 degree)
+    // it will be equivalent to -1 (-90 degree) rotation. actual_rotation will get this number and then apply it
+    // for the further calculations.
+    while (!(actual_rotation == 0 || actual_rotation == 1 || actual_rotation == -1 || actual_rotation == 2
+             || actual_rotation == -2)) {
+        if (actual_rotation > 0) {
+            actual_rotation -= 4;
+        } else {
+            actual_rotation += 4;
+        }
+    }
+
+    // If rotation angle is 360 degrees, create a copy of a current grid and return
+    if (actual_rotation == 0 || abs(actual_rotation) % 4 == 0) {
+        newgrid = *this;
+        return newgrid;
+    }
+    // If rotation angle is a multiple of 180 degrees, the new grid will have the same dimensions as the current one
+    if (abs(actual_rotation) % 2 == 0) {
+        newgrid = Grid(this->width, this->height);
+        for (int i = 0, new_i = this->height - 1; i < this->height; i++, new_i--) {
+            for (int j = 0, new_j = this->width - 1; j < this->width; j++, new_j--) {
+                //std::cout << j << " " << i << " || " << new_j << " " << new_i << std::endl;
+                newgrid(j, i) = (*this)(new_j, new_i);
+            }
+        }
+        // If rotation angle is a multiple of 90 degrees, the new grid will have inverted dimensions
+    } else {
+        newgrid = Grid(this->height, this->width);
+        // new_i keeps track of the correct index during CCW rotation and new_j during CW rotation.
+        for (int i = 0, new_i = this->width - 1; i < newgrid.height; i++, new_i--) {
+            for (int j = 0, new_j = newgrid.width - 1; j < newgrid.width; j++, new_j--) {
+                // If CW apply first formula, if CCW apply another...
+                if (actual_rotation > 0) {
+                    newgrid(j, i) = (*this)(i, new_j);
+                } else {
+                    newgrid(j, i) = (*this)(new_i, j);
+                }
+            }
+        }
+    }
+    return newgrid;
+
+
+}
 
 /**
  * operator<<(output_stream, grid)

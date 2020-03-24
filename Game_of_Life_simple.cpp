@@ -10,7 +10,18 @@
 #include "zoo.h"
 
 int main(int argc, char *argv[]) {
-    // Start with an empty grid
+    Grid g(4, 3);
+
+    g.set(1, 2, Cell::ALIVE);
+    g.set(2, 2, Cell::ALIVE);
+    g.set(3, 2, Cell::ALIVE);
+    g.set(3, 1, Cell::ALIVE);
+    g.set(2, 0, Cell::ALIVE);
+
+    Grid a = g.rotate(-3);
+    std::cout << g << a << std::endl;
+
+    /*// Start with an empty grid
     Grid grid(32, 10);
 
     Grid glider    = Zoo::glider(),
@@ -44,6 +55,6 @@ int main(int argc, char *argv[]) {
         std::exit(-1);
     }
 
-    // Destructors handle all the memory deallocation
+    // Destructors handle all the memory deallocation*/
     return 0;
 }
