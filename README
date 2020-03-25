@@ -1,4 +1,6 @@
+This application implements Conway's Game of life.
 
+Additional Info:
 I. Made sure my app passes every test:
 965217@sing-cs-linux-lab-218:~/Documents/CS371 AOOP CW/build> bash ./test_all_monolithic.sh
 + cd .
