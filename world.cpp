@@ -24,9 +24,6 @@
 #include "world.h"
 #include <algorithm>
 
-// Include the minimal number of headers needed to support your implementation.
-// #include ...
-
 /**
  * World::World()
  *
@@ -60,7 +57,7 @@ World::World() : World(0, 0) {
  * @param square_size
  *      The edge size to use for the width and height of the world.
  */
-World::World(int square_size) : World(square_size, square_size) {
+World::World(const int square_size) : World(square_size, square_size) {
 }
 
 /**
@@ -78,7 +75,7 @@ World::World(int square_size) : World(square_size, square_size) {
  * @param height
  *      The height of the world.
  */
-World::World(int width, int height) : current(Grid(width, height)), next(Grid(width, height)) {
+World::World(const int width, const int height) : current(Grid(width, height)), next(Grid(width, height)) {
 }
 
 /**
@@ -100,7 +97,7 @@ World::World(int width, int height) : current(Grid(width, height)), next(Grid(wi
  * @param initial_state
  *      The state of the constructed world.
  */
-World::World(Grid &initial_state) : current(initial_state),
+World::World(const Grid &initial_state) : current(initial_state),
                                     next(initial_state.get_width(), initial_state.get_height()) {
 
 }
@@ -430,7 +427,7 @@ void World::step(bool toroidal) {
                     this->next(j, i) = Cell::ALIVE;
                 }
             } else {
-                //If less a number of neighbours is <2 or >3 ad the cell is alive, it becomes dead
+                //If less a number of neighbours is <2 or >3 and the cell is alive, it becomes dead
                 if (count_alive_neighbours(j, i, toroidal) < 2 || count_alive_neighbours(j, i, toroidal) > 3) {
                     this->next(j, i) = Cell::DEAD;
                 }

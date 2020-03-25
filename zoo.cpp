@@ -23,14 +23,9 @@
  */
 #include <string>
 #include <fstream>
-#include <algorithm>
 #include <bitset>
 #include "grid.h"
 #include "zoo.h"
-
-
-// Include the minimal number of headers needed to support your implementation.
-// #include ...
 
 /**
  * Zoo::glider()
@@ -182,8 +177,7 @@ Grid Zoo::load_ascii(const std::string &path) {
     Grid g(width, height);
     //Skipping the first line before the loop
     std::getline(file, data);
-    // Throw an exception if a cell is not either DEAD or ALIVE or if newline char is missing
-
+    // Throw an exception if a cell is neither DEAD or ALIVE or if newline char is missing
     for (int i = 0; i < height; i++) {
         std::getline(file, data);
         for (int j = 0; j < width; j++) {
@@ -241,8 +235,8 @@ void Zoo::save_ascii(const std::string &path, Grid &grid) {
     if (!file) {
         throw std::runtime_error(std::string("Can't open the file!"));
     }
-    int width = grid.get_width();
-    int height = grid.get_height();
+    const int width = grid.get_width();
+    const int height = grid.get_height();
     // Write width and height to a file
     file << width << " " << height << std::endl;
     // Write every cell to a file
@@ -310,7 +304,7 @@ Grid Zoo::load_binary(const std::string &path) {
     if (width * height % 8 != 0) {
         // padding indicates a number of bits needed to finish the byte
         padding = width * height % 8;
-        // loopValue makes sure we loop on every byte, which might contain the information
+        // loopValue makes sure we loop on every byte which might contain the information
         loopValue = (width * height + padding) / 8;
     } else {
         loopValue = width * height / 8;
@@ -331,9 +325,9 @@ Grid Zoo::load_binary(const std::string &path) {
         bFile.read(reinterpret_cast<char *>(&currVal), sizeof(char));
         // A current byte we are reading
         std::string currentByte;
-        for (unsigned int b = 0; b < 8; b++) {
+        for (unsigned int bit = 0; bit < 8; bit++) {
             // += syntax will create our current byte by adding each bit separately
-            currentByte += std::to_string(((currVal >> b) & 0x1));
+            currentByte += std::to_string(((currVal >> bit) & 0x1));
         }
         bytes[i] = currentByte;
     }
@@ -347,9 +341,9 @@ Grid Zoo::load_binary(const std::string &path) {
     for (unsigned int i = 0; i < byte.size(); i++) {
         if (byte[i] == '1') {
             // Get x, y using the idx
-            int x = i % width;
-            int y = (i - x) / width;
-            // Assertation to not go outside the bounds of the grid
+            const int x = i % width;
+            const int y = (i - x) / width;
+            // Assertion to not go outside the bounds of the grid
             if (!(x == width || y == height)) {
                 g(x, y) = Cell::ALIVE;
             }
@@ -395,8 +389,8 @@ void Zoo::save_binary(const std::string &path, Grid &grid) {
     if (!file) {
         throw std::runtime_error(std::string("Can't open the file!"));
     }
-    int width = grid.get_width();
-    int height = grid.get_height();
+    const int width = grid.get_width();
+    const int height = grid.get_height();
     std::bitset<8> bitset; // A convenient container for 8 bit values
 
     // Write width and height to a file
@@ -404,8 +398,8 @@ void Zoo::save_binary(const std::string &path, Grid &grid) {
     file.write((char *) &height, sizeof(int));
     // A counter which keeps track of bit we are currently focusing on
     int bitset_count = 0;
-    int padding = width * height % 8;
-    unsigned int content_bytes = (width * height + padding) / 8;
+    const int padding = width * height % 8;
+    unsigned const int content_bytes = (width * height + padding) / 8;
     unsigned int current_bytes = 0;
 
     for (int i = 0; i < height; i++) {

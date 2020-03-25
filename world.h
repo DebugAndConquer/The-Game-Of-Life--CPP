@@ -9,10 +9,6 @@
  * @date March, 2020
  */
 #pragma once
-
-// Add the minimal number of includes you need in order to declare the class.
-// #include ...
-
 #include "grid.h"
 
 /**
@@ -25,12 +21,12 @@ class World {
 private:
     Grid current;
     Grid next;
-    int count_alive_neighbours(int x, int y, bool toroidal);
+    int count_alive_neighbours(int x, int y, bool toroidal); // Alive cells wrapped in 3x3 square. Current cell - center
 
 public:
     World(int width, int height);
     explicit World(int square_size);
-    explicit World(Grid &initial_state);
+    explicit World(const Grid &initial_state);
     World();
 
     // Member functions

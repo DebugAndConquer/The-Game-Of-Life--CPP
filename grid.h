@@ -50,8 +50,12 @@ public:
     void set(int x, int y, Cell value);                      // Updates the value of the cell at the desired coordinate
     Grid crop(int x0, int y0, int x1, int y1);              // Crops the grid w.r.t specified range
     void merge(const Grid& other, int x0, int y0);         // Merges the other grid into the current one w.r.t x0, y0
-    // An overloaded variant does not allow alive cells to die
+
+    // An overloaded variant might not allow alive cells to die
     void merge(const Grid &other, int x0, int y0, bool alive_only);
+
+    // Creates a rotated to a multiple of 90 degrees copy of a grid.
+    // Same computation time will apply for any rotation coefficient
     Grid rotate(int rotation) const;
 
 

@@ -191,7 +191,7 @@ int Grid::get_total_cells() const {
  *      The number of alive cells.
  */
 int Grid::get_alive_cells() const {
-    int sum = std::count(grid.begin(), grid.end(), Cell::ALIVE);
+    const int sum = std::count(grid.begin(), grid.end(), Cell::ALIVE);
     return sum;
 }
 
@@ -277,9 +277,9 @@ void Grid::resize(const int new_width, const int new_height) {
         for (int i = 0; i < new_height; i++) {
             for (int j = 0; j < new_width; j++) {
                 // Mapping 1D representation of a vector to a 2D one
-                int idx = j + (i * new_width);
-                int newX = idx % new_width;
-                int newY = (idx - j) / new_width;
+                const int idx = j + (i * new_width);
+                const int newX = idx % new_width;
+                const int newY = (idx - j) / new_width;
                 // Cloning values from old vector to a new one w.r.t new coordinates
                 g(newX, newY) = this->get(j, i);
             }
@@ -289,9 +289,9 @@ void Grid::resize(const int new_width, const int new_height) {
         for (int i = 0; i < this->height; i++) {
             for (int j = 0; j < this->width; j++) {
                 // Mapping 1D representation of a vector to a 2D one
-                int idx = j + (i * new_width);
-                int newX = idx % new_width;
-                int newY = (idx - j) / new_width;
+                const int idx = j + (i * new_width);
+                const int newX = idx % new_width;
+                const int newY = (idx - j) / new_width;
                 // Cloning values from old vector to a new one w.r.t new coordinates
                 g(newX, newY) = this->get(j, i);
             }
@@ -357,7 +357,7 @@ Cell Grid::get(const int x, const int y) const {
     if (x >= this->width || x < 0) throw std::exception();
     if (y >= this->height || y < 0) throw std::exception();
 
-    Cell value = (*this)(x, y);
+    const Cell value = (*this)(x, y);
     return value;
 }
 
@@ -434,7 +434,7 @@ Cell &Grid::operator()(const int x, const int y) {
     if (x >= this->width || x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
     if (y >= this->height || y < 0) throw std::runtime_error(std::string("y is out of bounds!"));
 
-    int t = this->get_index(x, y);
+    const int t = this->get_index(x, y);
     return grid[t];
 }
 
@@ -472,9 +472,9 @@ Cell &Grid::operator()(const int x, const int y) {
 Cell &Grid::operator()(const int x, const int y) const {
     if (x >= this->width || x < 0) throw std::runtime_error(std::string("x is out of bounds!"));
 
-    if (y >= this->height || y < 0) throw std::runtime_error(std::string(std::to_string(y)));
+    if (y >= this->height || y < 0) throw std::runtime_error(std::string("y is out of bounds"));
 
-    int t = this->get_index(x, y);
+    const int t = this->get_index(x, y);
     const Cell &res = grid[t];
     return const_cast<Cell &>(res);
 
@@ -515,7 +515,7 @@ Cell &Grid::operator()(const int x, const int y) const {
  *      or if the crop window has a negative size.
  */
 
-Grid Grid::crop(int x0, int y0, int x1, int y1) {
+Grid Grid::crop(const int x0, const int y0, const int x1, const int y1) {
     if (x0 > this->get_width() || x0 < 0 ||
         x1 > this->get_width() || x1 < 0 ||
         y0 > this->get_height() || y0 < 0 ||
@@ -523,8 +523,8 @@ Grid Grid::crop(int x0, int y0, int x1, int y1) {
         throw std::runtime_error(std::string("One of the arguments is not a valid coordinate!"));
     }
     // Get the size of the new grid
-    int cropped_width = x1 - x0;
-    int cropped_height = y1 - y0;
+    const int cropped_width = x1 - x0;
+    const int cropped_height = y1 - y0;
     if (cropped_width < 0 || cropped_height < 0) {
         throw std::runtime_error(std::string("A window has a negative size!"));
     }
@@ -585,9 +585,10 @@ Grid Grid::crop(int x0, int y0, int x1, int y1) {
  * @throws
  *      std::exception or sub-class if the other grid being placed does not fit within the bounds of the current grid.
  */
-void Grid::merge(const Grid &other, int x0, int y0) {
+void Grid::merge(const Grid &other, const int x0, const int y0) {
     if (other.get_width() > this->get_width() || other.get_height() > this->get_height()) {
-        throw std::runtime_error(std::string("The other grid doesn't fit within the bounds of the current one!"));
+        throw std::runtime_error(std::string
+        ("The other grid doesn't fit within the bounds of the current one!"));
     }
     if ((x0 < 0 || x0 > this->get_width()) || y0 < 0 || y0 > this->get_width()) {
         throw std::runtime_error(std::string("Either x or y is has a non-reasonable value!"));
@@ -607,7 +608,7 @@ void Grid::merge(const Grid &other, int x0, int y0) {
 }
 
 // Overloaded version does not allow alive cells to become dead
-void Grid::merge(const Grid &other, int x0, int y0, bool alive_only) {
+void Grid::merge(const Grid &other, const int x0, const int y0, const bool alive_only) {
     if (!alive_only) {
         merge(other, x0, y0);
     } else {
@@ -656,8 +657,8 @@ void Grid::merge(const Grid &other, int x0, int y0, bool alive_only) {
  * @return
  *      Returns a copy of the grid that has been rotated.
  */
-Grid Grid::rotate(int rotation) const {
-    // Note: Time Complexity: O(n^2). Access complexity: O(1) in EVERY CASE except rotation = 0 and multiples.
+Grid Grid::rotate(const int rotation) const {
+    // Note: Time Complexity: O(n^2). Access complexity: O(1) in EVERY CASE except when rotation = 0 and multiples.
     Grid newgrid;
     int actual_rotation = rotation;
     // Any rotation can be brought down to 4 cases => 0, 90 ,-90, 180 degrees, so when a user passes e.g 3 (270 degree)
@@ -682,7 +683,6 @@ Grid Grid::rotate(int rotation) const {
         newgrid = Grid(this->width, this->height);
         for (int i = 0, new_i = this->height - 1; i < this->height; i++, new_i--) {
             for (int j = 0, new_j = this->width - 1; j < this->width; j++, new_j--) {
-                //std::cout << j << " " << i << " || " << new_j << " " << new_i << std::endl;
                 newgrid(j, i) = (*this)(new_j, new_i);
             }
         }

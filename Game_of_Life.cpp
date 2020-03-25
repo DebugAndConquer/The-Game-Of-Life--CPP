@@ -21,14 +21,15 @@ int main(int argc, char *argv[]) {
 
 
     cxxopts::Options options("Game_of_Life",
-            "This program implements John Conway's Game of Life for Cellular Automaton (circa 1970).");
+                             "This program implements John Conway's Game of Life for Cellular Automaton (circa 1970).");
 
     // Declare the valid command line arguments and their types and default values.
     options.add_options()
-            ("f,file", "Load an ascii file from the provided path.",  cxxopts::value<std::string>())
-            ("o,output", "Save an ascii file to the provided path.",  cxxopts::value<std::string>())
-            ("s,steps","The number of steps to simulate the world.", cxxopts::value<int>()->default_value("10"))
-            ("e,every","Print world to the console every N steps. 0 disables printing.", cxxopts::value<int>()->default_value("0"))
+            ("f,file", "Load an ascii file from the provided path.", cxxopts::value<std::string>())
+            ("o,output", "Save an ascii file to the provided path.", cxxopts::value<std::string>())
+            ("s,steps", "The number of steps to simulate the world.", cxxopts::value<int>()->default_value("10"))
+            ("e,every", "Print world to the console every N steps. 0 disables printing.",
+             cxxopts::value<int>()->default_value("0"))
             ("t,toroidal", "Simulate the Game of Life on a torus.", cxxopts::value<bool>()->default_value("false"))
             ("h,help", "Print usage.");
 
@@ -42,8 +43,8 @@ int main(int argc, char *argv[]) {
     }
 
     // Parse the (potentially defaulted) parameters for this simulation
-    const int  steps    = result["steps"].as<int>();
-    const int  every    = result["every"].as<int>();
+    const int steps = result["steps"].as<int>();
+    const int every = result["every"].as<int>();
     const bool toroidal = result["toroidal"].as<bool>();
 
     // Start with an empty grid
@@ -65,7 +66,7 @@ int main(int argc, char *argv[]) {
 
     // Print the initial state of the grid
     std::cout << "Initial state..." << std::endl
-              << "Alive " << world.get_alive_cells() << " | Dead " << world.get_dead_cells()  << std::endl
+              << "Alive " << world.get_alive_cells() << " | Dead " << world.get_dead_cells() << std::endl
               << world.get_state() << std::endl;
 
     // Perform the requested number of update steps
@@ -81,7 +82,7 @@ int main(int argc, char *argv[]) {
 
     // Print the final state of the grid
     std::cout << "Final state..." << std::endl
-              << "Alive " << world.get_alive_cells() << " | Dead " << world.get_dead_cells()  << std::endl
+              << "Alive " << world.get_alive_cells() << " | Dead " << world.get_dead_cells() << std::endl
               << world.get_state() << std::endl;
 
     // Attempt to save to the output directory if a path was given
