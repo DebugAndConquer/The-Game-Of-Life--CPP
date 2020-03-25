@@ -1,0 +1,26 @@
+
+I. Made sure my app passes every test:
+965217@sing-cs-linux-lab-218:~/Documents/CS371 AOOP CW/build> bash ./test_all_monolithic.sh
++ cd .
++ rm ../bin/test_all_monolithic
++ g++ --std=c++11 -Wall ../tests/test_1.cpp ../tests/test_2.cpp ../tests/test_3.cpp ../tests/test_4.cpp ../tests/test_5.cpp ../tests/test_6.cpp ../tests/test_7.cpp ../tests/test_8.cpp ../tests/test_9.cpp ../tests/test_10.cpp ../tests/test_11.cpp ../tests/test_12.cpp ../tests/test_13.cpp ../tests/test_14.cpp ../tests/test_15.cpp ../tests/test_16.cpp ../tests/test_17.cpp ../tests/test_18.cpp ../tests/test_19.cpp ../tests/test_20.cpp ../tests/test_21.cpp ../grid.cpp ../world.cpp ../zoo.cpp ../bin/catch.o -o ../bin/test_all_monolithic
++ ../bin/test_all_monolithic
+===============================================================================
+All tests passed (979 assertions in 36 test cases)
+
+
+
+
+II. Valgrind reported no memory leaks in any test. Here is a report from test_all_monolithic:
+
+==27513==
+==27513== HEAP SUMMARY:
+==27513==     in use at exit: 0 bytes in 0 blocks
+==27513==   total heap usage: 7,212 allocs, 7,212 frees, 639,016 bytes allocated
+==27513==
+==27513== All heap blocks were freed -- no leaks are possible
+==27513==
+==27513== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==27513== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+
+
