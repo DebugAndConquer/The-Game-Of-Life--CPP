@@ -195,8 +195,8 @@ Grid Zoo::load_ascii(const std::string &path) {
             // Delete first element of the line
             data.erase(0, 1);
         }
-        // Throws an exception if \n is missing
-        if ((int) data.back() != 0) {
+        // Throws an exception if \n is missing. For some reason if (data[0] != '\n') does not work, so had to use 0
+        if (data[0] != 0) {
             throw std::runtime_error(std::string("Missing newline character!"));
         }
     }
