@@ -20,26 +20,45 @@
 class World {
 private:
     Grid current;
+
     Grid next;
-    int count_alive_neighbours(int x, int y, bool toroidal); // Alive cells wrapped in 3x3 square. Current cell - center
+
+    int count_alive_neighbours(const int x, const int y, const bool toroidal); // Alive cells wrapped in 3x3 square. Current cell - center
 
 public:
-    World(int width, int height);
-    explicit World(int square_size);
+    World(const int width,const  int height);
+
+    explicit World(const int square_size);
+
     explicit World(const Grid &initial_state);
+
     World();
 
     // Member functions
     int get_width() const;
+
     int get_height() const;
+
     int get_total_cells() const;
+
     int get_alive_cells() const;
+
     int get_dead_cells() const;
-    Grid &get_state() const;                                     // A reference to the grid with current state
-    void resize(int new_width, int new_height);
-    void resize(int square_size);
-    void step(bool toroidal);                                 // Perform a 1 step in Conway's Game of Life
+
+    // A reference to the grid with current state
+    Grid &get_state() const;
+
+    void resize(const int new_width, const int new_height);
+
+    void resize(const int square_size);
+
+    // Perform a 1 step in Conway's Game of Life
+    void step(const bool toroidal);
+
     void step();
-    void advance(int steps, bool toroidal);                 // Perform multiple steps in Conway's Game of Life
-    void advance(int steps);
+
+    // Perform multiple steps in Conway's Game of Life
+    void advance(const int steps, const bool toroidal);
+
+    void advance(const int steps);
 };

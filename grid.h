@@ -27,36 +27,57 @@ enum Cell : char {
 class Grid {
 private:
     int width, height;
-    std::vector<Cell> grid;                                  // 2D Vector for storing the grid
-    int get_index(int x, int y) const;                      // Gets 1D index of a 2D coordinate
+
+    std::vector<Cell> grid;                          // 2D Vector for storing the grid
+
+    int get_index(const int x, const int y) const;   // Gets 1D index of a 2D coordinate
 public:
     // Public functions
-    Grid();                                              // Default Constructor with grid size = 0
-    explicit Grid(int square_size);                     // Overloaded Constructor with grid size = squareSize*squareSize
-    Grid(int width, int height);                       // Overloaded Constructor with grid size = width*height
-    Cell &operator()(int x, int y);
-    Cell &operator()(int x, int y) const;
+    Grid();                                          // Default Constructor with grid size = 0
+
+    explicit Grid(const int square_size);            // Overloaded Constructor with grid size = squareSize*squareSize
+
+    Grid(const int width, const int height);         // Overloaded Constructor with grid size = width*height
+
+    Cell &operator()(const int x, const int y);
+
+    Cell &operator()(const int x, const int y) const;
+
     friend std::ostream &operator<<(std::ostream &os, const Grid &g);
 
     // Member Functions
     int get_width() const;
+
     int get_height() const;
+
     int get_total_cells() const;
+
     int get_alive_cells() const;
+
     int get_dead_cells() const;
-    void resize(int square_size);
-    void resize(int new_width, int new_height);
-    Cell get(int x, int y) const;                             // Returns the value of the cell at the desired coordinate
-    void set(int x, int y, Cell value);                      // Updates the value of the cell at the desired coordinate
-    Grid crop(int x0, int y0, int x1, int y1);              // Crops the grid w.r.t specified range
-    void merge(const Grid& other, int x0, int y0);         // Merges the other grid into the current one w.r.t x0, y0
+
+    void resize(const int square_size);
+
+    void resize(const int new_width, const int new_height);
+
+    // Returns the value of the cell at the desired coordinate
+    Cell get(const int x, const int y) const;
+
+    // Updates the value of the cell at the desired coordinate
+    void set(const int x, const int y, const Cell value);
+
+    // Crops the grid w.r.t specified range
+    Grid crop(const int x0,const  int y0,const  int x1,const  int y1);
+
+    // Merges the other grid into the current one w.r.t x0, y0
+    void merge(const Grid& other, const int x0, const int y0);
 
     // An overloaded variant might not allow alive cells to die
-    void merge(const Grid &other, int x0, int y0, bool alive_only);
+    void merge(const Grid &other, const int x0, const int y0,const  bool alive_only);
 
     // Creates a rotated to a multiple of 90 degrees copy of a grid.
     // Same computation time will apply for any rotation coefficient
-    Grid rotate(int rotation) const;
+    Grid rotate(const int rotation) const;
 
 
 };

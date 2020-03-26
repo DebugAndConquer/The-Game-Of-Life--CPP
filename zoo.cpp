@@ -228,7 +228,7 @@ Grid Zoo::load_ascii(const std::string &path) {
  *      Throws std::runtime_error or sub-class if the file cannot be opened.
  */
 
-void Zoo::save_ascii(const std::string &path, Grid &grid) {
+void Zoo::save_ascii(const std::string &path, const Grid &grid) {
     std::ofstream file;
     file.open(path);
     // Throw an exception if a file cannot be opened
@@ -382,7 +382,7 @@ Grid Zoo::load_binary(const std::string &path) {
  *      Throws std::runtime_error or sub-class if the file cannot be opened.
  */
 
-void Zoo::save_binary(const std::string &path, Grid &grid) {
+void Zoo::save_binary(const std::string &path, const Grid &grid) {
     std::ofstream file;
     file.open(path, std::ios::out | std::ios::binary);
     // Throw an exception if a file cannot be opened
